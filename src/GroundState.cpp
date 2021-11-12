@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// Ground state class (before launch)
+
 class GroundState : public State {  
 
 public:

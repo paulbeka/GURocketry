@@ -5,10 +5,14 @@
 #include "FlightState.cpp"
 #include "GroundState.cpp"
 
+// This class handles the different states of the computer
+
 class StateMachine : public Machine {
 
 private:
-    
+    GroundState groundState;
+    FlightState flightState;
+    State* currentState;
 
 public:
 
@@ -20,8 +24,8 @@ public:
 
     void choseState(int status) {
         switch(status) {
-            case 0: currentState = groundState;
-            case 1: currentState = flightState;
+            case 0: currentState = &groundState;
+            case 1: currentState = &flightState;
         }
     }
     
@@ -37,7 +41,7 @@ public:
         running = true;
 
         while(running) {
-            currentState.mainLoop();
+            currentState->mainLoop();
             running = false;
         }
     }

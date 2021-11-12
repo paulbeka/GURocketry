@@ -4,9 +4,9 @@
 class State {
 
 public:
-    virtual void setup() {};
+    virtual void setup() = 0;
 
-    virtual void mainLoop() {};
+    virtual void mainLoop() = 0;
 };
 
 #endif
