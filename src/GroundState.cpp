@@ -1,14 +1,21 @@
-#include <state.h>
+#include "./headers/state.hpp"
+#include <stdlib.h>
+#include <stdio.h>
 
-class GroundState : public State {
+class GroundState : public State {  
 
-    void setup() {
+public:
+
+    int test = 0;
+
+    void setup() override {
 
     }
 
 
-    void mainLoop() {
-
+    void mainLoop() override {
+        printf("The state machine is working!\n");
+        printf("You are on the ground state.\n");
     }
 
 };
