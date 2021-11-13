@@ -1,4 +1,4 @@
-#include "./headers/state.hpp"
+#include "../headers/state.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -8,12 +8,9 @@ class GroundState : public State {
 
 public:
 
-    int test = 0;
-
-    void setup() override {
+    void setup() {
 
     }
-
 
     void mainLoop() override {
         printf("The state machine is working!\n");

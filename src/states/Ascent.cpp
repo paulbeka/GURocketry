@@ -1,9 +1,10 @@
-#include "./headers/state.hpp"
+#include "../headers/state.hpp"
 
 // Flight state class (during flight)
 
-class FlightState : public State {
+class AscentState : public State {
 
+public:
     void setup() {
 
     }

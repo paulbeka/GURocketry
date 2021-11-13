@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "./headers/machine.hpp"
 
-#include "FlightState.cpp"
-#include "GroundState.cpp"
+#include "states/Ascent.cpp"
+#include "states/GroundState.cpp"
 
 // This class handles the different states of the computer
 
@@ -11,7 +11,7 @@ class StateMachine : public Machine {
 
 private:
     GroundState groundState;
-    FlightState flightState;
+    AscentState ascentState;
     State* currentState;
 
 public:
@@ -19,19 +19,19 @@ public:
     StateMachine(int status) {
         setup();
 
-        choseState(status);   
+        currentState = choseState(status);
     }
 
-    void choseState(int status) {
+    State* choseState(int status) {
         switch(status) {
-            case 0: currentState = &groundState;
-            case 1: currentState = &flightState;
+            case 0: return &groundState;
+            case 1: return &ascentState;
         }
     }
     
     void setup() {
         groundState = GroundState();
-        flightState = FlightState();
+        ascentState = AscentState();
 
         running = true;
     }

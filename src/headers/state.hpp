@@ -4,8 +4,8 @@
 class State {
 
 public:
+    virtual ~State() {};
     virtual void setup() = 0;
-
     virtual void mainLoop() = 0;
 };
 
