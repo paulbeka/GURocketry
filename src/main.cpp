@@ -1,19 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <Arduino.h>
 
 #include "Machine.cpp"
 
+void setup() {
+  StateMachine mainMachine = StateMachine(0);
 
-// call setup functions
-int setup() {
-    StateMachine mainMachine = StateMachine(0);
-
-    mainMachine.run();
+  mainMachine.run();
 }
 
-
-int main() {
-
-    setup();
-
+void loop() {
+  // put your main code here, to run repeatedly:
 }

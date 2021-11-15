@@ -27,6 +27,7 @@ public:
             case 0: return &groundState;
             case 1: return &ascentState;
         }
+        return NULL;
     }
     
     void setup() {
