@@ -1,7 +1,8 @@
 #include "Arduino.h"
 #include "GPS_parseData.h"
 #include <Adafruit_GPS.h>
-#include <array>
+#include <stdexcept>
+
 using namespace std;
 
 #define GPSSerial Serial1
@@ -16,7 +17,8 @@ uint32_t timer = millis();
 GPSData::GPSData() {
 }
 
-array<int, 5> GPSData::obtainData() {
+double* GPSData::obtainData() {
+	static double dataList[3];
 	// Reading data fast enough, at 115200 bauds (11520 characters per second)
 	Serial.begin(115200);
 	Serial.println("Parsing test...");
@@ -49,20 +51,29 @@ array<int, 5> GPSData::obtainData() {
 				// Need to use 'c' to avoid unused variable error
 				Serial.print("");
 			}
-			delay(1000);
+			// Delay for finding fix (0.1s / 100ms)
+			delay(100);
 			Serial.println("Waiting on fix...");
 			if (counter == 10) {
-				array<int, 5> arrayList = { 3,1,2,4,5 };
-				return arrayList;
+				dataList[0] = 0;
+				dataList[1] = 0;
+				dataList[2] = 0;
+				// Means that the fix is taking too long and we return empty list
+				return dataList;
 			}
 		}
 		Serial.println("Fix: " + GPS.fix);
-		_latitude = 8; // GPS.latitude
-		_longitude = 9;// GPS.longitude
-		_angle = 7; // GPS.angle
-		_speed = 6; // GPS.speed
-		_altitude = 5; // GPS.altitude
-		array<int, 5> outputArray = { 7,8,9,0,1 };
-		return outputArray;
+		// Latitude format = DDMM.MMMM (degrees then minutes format)
+		// Longitude format = DDDMM.MMMM (degrees then minutes format)
+
+		_latitude = GPS.latitude;
+		_longitude = GPS.longitude;
+		_altitude = GPS.altitude;
+		// Do some filtering on the _latitude and _longitude
+
+		dataList[0] = _latitude;
+		dataList[1] = _longitude;
+		dataList[2] = _altitude;
+		return dataList;
 	}
 }

@@ -15,7 +15,7 @@ using namespace std;
 class GPSData {
 	public:
 		GPSData();
-		array<int, 5> obtainData();
+		double* obtainData();
 	private:
 		int _id;
 		int _latitude;
