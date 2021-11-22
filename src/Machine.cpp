@@ -41,6 +41,8 @@ public:
 
         running = true;
 
+        //currentState->setup();
+
         while(running) {
             currentState->mainLoop();
             running = false;
