@@ -1,8 +1,8 @@
 #include "../headers/state.hpp"
+#include "../sensors/altimeter.cpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <Adafruit_MPL3115A2.h>
-#include "sensors/altimeter.cpp"
 
 // Ground state class (before launch)
 
@@ -10,18 +10,22 @@ class GroundState : public State {
 
 private:
     Adafruit_MPL3115A2 baro;
+    Altimeter alt;
 
 public:
 
     void setup() {
-        baro = altimeterSetup();
+        alt = Altimeter();
+        baro = alt.altSetup();
     }
 
     void mainLoop() override {
-        //String dat = getAltimeterData(baro);
+        String dat = baro.getAltitude();
         //printf("%s", dat);
-        printf("The state machine is working!\n");
-        printf("You are on the ground state.\n");
+        Serial.begin(9600);
+        // printf("The state machine is working!\n");
+        // printf("You are on the ground state.\n");
+        Serial.println(dat);
     }
 
 };

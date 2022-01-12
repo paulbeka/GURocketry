@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "./headers/machine.hpp"
+#include <Adafruit_MPL3115A2.h>
 
+#include "./headers/machine.hpp"
 #include "states/Ascent.cpp"
 #include "states/GroundState.cpp"
+
 
 // This class handles the different states of the computer
 
@@ -13,6 +15,12 @@ private:
     GroundState groundState;
     AscentState ascentState;
     State* currentState;
+
+    void blink() {
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(1000);
+        digitalWrite(LED_BUILTIN, HIGH);
+    }
 
 public:
 
@@ -31,21 +39,29 @@ public:
     }
     
     void setup() {
+        // Adafruit_MPL3115A2 baro = altSetup();
+
         groundState = GroundState();
         ascentState = AscentState();
 
         running = true;
+
+        blink();
     }
 
     void run() {
 
         running = true;
 
-        //currentState->setup();
+        blink();
+
+        currentState->setup();
 
         while(running) {
+            
+            blink();
             currentState->mainLoop();
-            running = false;
+
         }
     }
     
