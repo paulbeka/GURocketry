@@ -16,12 +16,6 @@ private:
     AscentState ascentState;
     State* currentState;
 
-    void blink() {
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(1000);
-        digitalWrite(LED_BUILTIN, HIGH);
-    }
-
 public:
 
     StateMachine(int status) {
@@ -46,20 +40,16 @@ public:
 
         running = true;
 
-        blink();
     }
 
     void run() {
 
         running = true;
 
-        blink();
-
         currentState->setup();
 
         while(running) {
             
-            blink();
             currentState->mainLoop();
 
         }
