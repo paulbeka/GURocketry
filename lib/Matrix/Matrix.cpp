@@ -276,6 +276,17 @@ Matrix Matrix::rowReduceFromGaussian() {
 	return R;
 }
 
+Matrix Matrix::transpose() {
+	Matrix ret(cols_, rows_);
+
+	for (int i = 0; i < rows_; i++) {
+		for (int j = 0; j < cols_; i++) {
+			ret.p[i][j] = p[j][i];
+		}
+	}
+	return ret;
+}
+
 Matrix Matrix::inverse() {
 	Matrix I = Matrix::createIdentity(rows_);
 	Matrix AI = Matrix::augment(*this, I);

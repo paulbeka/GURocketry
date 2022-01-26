@@ -33,6 +33,7 @@ public:
 	static Matrix augment(Matrix, Matrix);
 	Matrix gaussianEliminate();
 	Matrix rowReduceFromGaussian();
+	Matrix transpose(); 
 	void swapRows(int, int);
 
 private:
