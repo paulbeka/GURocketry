@@ -16,9 +16,17 @@ private:
     AscentState ascentState;
     State* currentState;
 
+    Adafruit_MPL3115A2 altSensor;
+    Altimeter alt;
+
+
 public:
 
     StateMachine(int status) {
+        
+        alt = Altimeter();
+        altSensor = alt.altSetup();
+        
         setup();
 
         currentState = choseState(status);
@@ -35,7 +43,7 @@ public:
     void setup() {
         // Adafruit_MPL3115A2 baro = altSetup();
 
-        groundState = GroundState();
+        groundState = GroundState(altSensor);
         ascentState = AscentState();
 
         running = true;

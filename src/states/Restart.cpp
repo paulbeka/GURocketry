@@ -1,13 +1,14 @@
 #include "../headers/state.hpp"
 
-// Flight state class (during flight)
+// Reinitialise class
 
-class AscentState : public State {
+class Restart : public State {
 
 public:
     void setup() {
 
     }
+
 
     void mainLoop() {
 

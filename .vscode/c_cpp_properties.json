@@ -20,7 +20,9 @@
                 "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/libraries/SPI",
                 "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/libraries/Wire",
                 "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
-                "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/cores/teensy3",
+                "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/cores/teensy4",
+                "c:/Workspace/GURocketry/lib/Matrix",
+                "c:/Workspace/GURocketry/lib/formulas",
                 "c:/Workspace/GURocketry/.pio/libdeps/teensy40/Adafruit GFX Library",
                 "c:/Workspace/GURocketry/.pio/libdeps/teensy40/Adafruit ILI9341",
                 "c:/Workspace/GURocketry/.pio/libdeps/teensy40/Adafruit STMPE610",
@@ -139,7 +141,9 @@
                     "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/libraries/SPI",
                     "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/libraries/Wire",
                     "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
-                    "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/cores/teensy3",
+                    "C:/Users/bekae/.platformio/packages/framework-arduinoteensy/cores/teensy4",
+                    "c:/Workspace/GURocketry/lib/Matrix",
+                    "c:/Workspace/GURocketry/lib/formulas",
                     "c:/Workspace/GURocketry/.pio/libdeps/teensy40/Adafruit GFX Library",
                     "c:/Workspace/GURocketry/.pio/libdeps/teensy40/Adafruit ILI9341",
                     "c:/Workspace/GURocketry/.pio/libdeps/teensy40/Adafruit STMPE610",
@@ -246,13 +250,13 @@
             },
             "defines": [
                 "PLATFORMIO=50204",
-                "__MK20DX256__",
-                "ARDUINO_TEENSY31",
+                "__IMXRT1062__",
+                "ARDUINO_TEENSY40",
                 "USB_SERIAL",
                 "ARDUINO=10805",
                 "TEENSYDUINO=155",
                 "CORE_TEENSY",
-                "F_CPU=72000000L",
+                "F_CPU=600000000",
                 "LAYOUT_US_ENGLISH",
                 ""
             ],
@@ -260,8 +264,9 @@
             "compilerPath": "C:/Users/bekae/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe",
             "compilerArgs": [
                 "-mthumb",
-                "-mcpu=cortex-m4",
-                "-mno-unaligned-access",
+                "-mcpu=cortex-m7",
+                "-mfloat-abi=hard",
+                "-mfpu=fpv5-d16",
                 ""
             ]
         }
