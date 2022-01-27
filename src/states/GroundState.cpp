@@ -1,5 +1,6 @@
 #include "../headers/state.hpp"
 #include "../sensors/altimeter.cpp"
+#include "sensors/barometer.cpp"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -9,11 +10,13 @@ class GroundState : public State {
 
 private:
     Adafruit_MPL3115A2 altSensor;
+    Barometer barometer;
 
 public:
 
-    GroundState(Adafruit_MPL3115A2 alt) {
+    GroundState(Adafruit_MPL3115A2 alt, Barometer baro) {
         altSensor = alt;
+        barometer = baro;
     }
 
     GroundState() = default;
@@ -29,6 +32,7 @@ public:
         // printf("The state machine is working!\n");
         // printf("You are on the ground state.\n");
         Serial.println(dat);
+        Serial.println(barometer.getSensorData());
     }
 
 };
