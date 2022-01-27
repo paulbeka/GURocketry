@@ -19,6 +19,7 @@ private:
     Adafruit_MPL3115A2 altSensor;
     Altimeter alt;
     Barometer barometer;
+    GPSClass GPS;
 
 public:
 
@@ -27,6 +28,7 @@ public:
         alt = Altimeter();
         altSensor = alt.altSetup();
         barometer = Barometer();
+        GPS = GPSClass();
         
         setup();
 
@@ -46,7 +48,7 @@ public:
 
         barometer.setup();
 
-        groundState = GroundState(altSensor, barometer);
+        groundState = GroundState(altSensor, barometer, GPS);
         ascentState = AscentState();
 
         running = true;
