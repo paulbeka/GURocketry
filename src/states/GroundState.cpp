@@ -1,7 +1,7 @@
 #include "../headers/state.hpp"
-#include "../sensors/altimeter.cpp"
+#include "sensors/altimeter.cpp"
 #include "sensors/barometer.cpp"
-#include "sensors/GPS_parseData/GPS_parseData.cpp"
+#include "sensors/GPS_parseData.cpp"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -34,6 +34,7 @@ public:
         // print sensor data
         Serial.println(altSensor.getAltitude());
         Serial.println(barometer.getSensorData());
+        Serial.println(gps.obtainData()[0]);
 
     }
 
