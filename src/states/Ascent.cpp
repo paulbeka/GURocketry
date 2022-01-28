@@ -4,6 +4,10 @@
 
 class AscentState : public State {
 
+private:
+    // move to next state
+    bool interrupt = false;
+
 public:
     void setup() {
 
@@ -11,6 +15,10 @@ public:
 
     void mainLoop() {
 
+    }
+
+    bool getInterrupt() {
+        return interrupt;
     }
 
 };

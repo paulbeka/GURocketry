@@ -1,0 +1,53 @@
+State [3x1]
+Covarience [3x3] 
+F [3x3]       // Use time_since_last_call to calculate dt (suvat)
+Measurement [2x1]  // The sensor data
+H [2x3]       // Measurement matrix (which measurements we have, 1s and 0s)
+GYRO [3x1]    //roll-pitch-yaw measurements
+q [4x1]       // orientation
+
+CONSTANT Q_Q [4x4]
+CONSTANT Q [3x3]             
+CONSTANT R_ACC       // Noise Covarience acceletation
+CONSTANT R_ALT       // Noise Covarience altimeter
+
+
+// do this every timestamp
+method prediction[LOOP] (State, Covarience):
+    F = calcF(time_since_last_call)
+    State = F * State
+    Covarience = (F * Covarience * F.T) + Q    // F.T is transpose
+    return State, Covarience
+
+
+// when inturrupt from sensor
+// Assumes both altitude and accelerometer
+method correction[INTURRUPT] (State, Covarience, Measurement, H):
+    K = Covarience * H.T * (H* Covarience * H.T + R[used])^(-1)     // times by the inverse of matrix
+    State = State + K * (Measurement - State*H)
+    Covarience = (id_matrix(3) - K*H) * Covarience * (id_matrix(3) - K*H).T + K*R*K.T
+    return State, Covarience
+
+
+// get the F matrix (suvat)
+method calcF(time_since_last_call):
+    return [1, dt, dt^2/2,
+            0,  1,    dt,
+            0,  0,    1]
+
+
+// calculate the quaterions (orientation of the rocket)
+method calcQuaternions(q, GYRO):
+    return q + dt * GYRO
+
+
+method mainLoop(Measurement):
+    if Measurement is [1x1]:
+        H [1x3]
+        correction (State, Covarience, Measurement, H)
+    if Measurement is [2x1]:
+        H [2x3]
+        correction (State, Covarience, Measurement, H)
+    else:
+        prediction (State, Covarience)
+

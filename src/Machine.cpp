@@ -61,7 +61,7 @@ public:
 
         currentState->setup();
 
-        while(running) {
+        while(running && !currentState->getInterrupt()) {
             
             currentState->mainLoop();
 

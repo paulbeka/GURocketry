@@ -10,9 +10,14 @@
 class GroundState : public State {  
 
 private:
+    
+    // Sensors [CREATE INCLUDE FILE FOR THESE]
     Adafruit_MPL3115A2 altSensor;
     Barometer barometer;
     GPSClass gps;
+
+    // interrupt this process and move to the next state.
+    bool interrupt = false;
 
 public:
 
@@ -36,6 +41,10 @@ public:
         Serial.println(barometer.getSensorData());
         Serial.println(gps.obtainData()[0]);
 
+    }
+
+    bool getInterrupt() {
+        return interrupt;
     }
 
 };

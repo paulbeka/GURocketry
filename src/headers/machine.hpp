@@ -11,7 +11,7 @@ public:
     virtual void setupStates() {};
 
     virtual void choseState() {};
-
+    
 };
 
 #endif

@@ -7,6 +7,7 @@ public:
     virtual ~State() {};
     virtual void setup() = 0;
     virtual void mainLoop() = 0;
+    virtual bool getInterrupt() = 0;
 };
 
 #endif
