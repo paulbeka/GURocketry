@@ -4,6 +4,7 @@
 #include "sensors/GPS_parseData.cpp"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 
 // Ground state class (before launch)
 
@@ -18,6 +19,7 @@ private:
 
     // interrupt this process and move to the next state.
     bool interrupt = false;
+    std::string stateName = "Ground";
 
 public:
 
@@ -45,6 +47,10 @@ public:
 
     bool getInterrupt() {
         return interrupt;
+    }
+
+    std::string getState() { 
+        return stateName;
     }
 
 };

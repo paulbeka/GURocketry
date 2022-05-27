@@ -11,10 +11,11 @@ void setup() {
 
   digitalWrite(LED_BUILTIN, HIGH);
 
-  mainMachine.run();
+  // mainMachine.run();
+  bool keepRunning = true;
 }
 
 void loop() {
-  
-
+  if (keepRunning) { mainMachine.run(); }
+  keepRunning = false;
 }
