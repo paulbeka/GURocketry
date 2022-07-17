@@ -50,13 +50,13 @@ void setup() {
   // Recieve fileName from client
   Serial.println("Awaiting file name from client...");
   int charCounter = 0;
-  bool fileNameRecieved = false;
-  while (!fileNameRecieved){
+  bool fileNameReceived = false;
+  while (!fileNameReceived){
     int packetSize = LoRa.parsePacket();
 
     if (packetSize) {
-      Serial.print("File name recieved: ");
-      fileNameRecieved = true;
+      Serial.print("File name received: ");
+      fileNameReceived = true;
       
       while (LoRa.available()){
         char incoming = (char)LoRa.read(); 
@@ -80,7 +80,7 @@ void setup() {
     fileNameStr = "gpsData.txt";
   }
   
-  // convert recieved fileName string to char array
+  // convert received fileName string to char array
   fileNameStr.toCharArray(fileNameArr, sizeof(fileNameArr));
   Serial.print("fileNameStr: "); Serial.println(fileNameStr);
   Serial.print("fileNameArr: "); Serial.println(fileNameArr);
@@ -89,12 +89,14 @@ void setup() {
 
 void loop() {
   int charCounter = 0;
+  bool gotMessageLength = false;
+  int messageNumberLength = 0;
   String gpsData = ""; // HHMMSSCC_00000.000000_00000.000000
   
   int packetSize = LoRa.parsePacket();
 
   if (packetSize) {
-      Serial.print("Data recieved: ");
+      Serial.print("Data received: ");
 
       while (LoRa.available()){
         char incoming = (char)LoRa.read(); 
@@ -102,10 +104,21 @@ void loop() {
           // if message doesn't begin with '#' we don't want it
           break;
         }
+        
+        if (!gotMessageLength) {
+          if (isDigit(incoming)) {
+            messageNumberLength += 1;
+          } else if (incoming == ' ') {
+            gotMessageLength = true;
+            messageNumberLength += 1;
+          }
+        }
+
         Serial.print(incoming);
 
         // store gpsData except "[num]# "
-        if (charCounter >= 3) {
+        // Problem that 3 should not be hardcoded
+        if (charCounter >= messageNumberLength) {
           gpsData += incoming;
         }
         
@@ -116,7 +129,7 @@ void loop() {
       Serial.print(LoRa.packetRssi());
       Serial.print("\n");
 
-      // save recieved gpsData to SD card
+      // save received gpsData to SD card
       sdFile = SD.open(fileNameArr, FILE_WRITE);
       sdFile.print(gpsData);
       Serial.print(fileNameArr); Serial.print(" "); Serial.println(gpsData);
