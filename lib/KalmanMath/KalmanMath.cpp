@@ -41,7 +41,7 @@ StateAndCovariance& KalmanMath::prediction(StateAndCovariance& SC) {
 	return SC;
 }
 
-void KalmanMath::kalmanLoop(Matrix& H, StateAndCovariance& SC, Matrix& sensorData, Matrix& R) {
+void KalmanMath::kalmanIteration(Matrix& H, StateAndCovariance& SC, Matrix& sensorData, Matrix& R) {
 	if (H(0, 0) == 1 && H(1, 2) == 1) {
 		KalmanMath::correction(SC, sensorData, H, R);
 	}
@@ -62,12 +62,16 @@ int main() {
 	Matrix sensorData = Matrix(2,1);
 	Matrix H = Matrix(HList, 2, 3);
 	Matrix R = Matrix(2, 2);
+	std::cout << "H Matrix: " << '\n' << H << '\n';
+	std::cout << "R Matrix: " << '\n' << R << '\n';
+	std::cout << "sensorData Matrix: " << '\n' << sensorData << '\n';
+
 	SC.state = Matrix(3, 1);
 	SC.covariance = Matrix(3, 3);
 	km.time_called = clock();
-	std::cout << km.time_called << '\n';
-	km.kalmanLoop(H, SC, sensorData, R);
-	std::cout << km.time_called << '\n';
+	km.kalmanIteration(H, SC, sensorData, R);
+	// std::cout << SC.state << '\n';
+	// std::cout << SC.covariance << '\n';
 
 	return 0;
 }
