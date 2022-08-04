@@ -26,22 +26,20 @@ StateAndCovariance& KalmanMath::correction(StateAndCovariance& SC, Matrix& senso
 	Matrix invS = ((H * SC.covariance) * HTranspose + R).inverse();
 	Matrix kalmanGain = SC.covariance * HTranspose * (invS);
 	SC.state = SC.state + kalmanGain * (sensorData - H * SC.state);
-	post = post - (kalmanGain* H);
-	Matrix postTranspose = post.transpose();
-	Matrix kalmanTranspose = kalmanGain.transpose();
-	SC.covariance = post * SC.covariance * postTranspose + ((kalmanGain * R) * kalmanTranspose);
+	SC.covariance = (identity_3 - kalmanGain * H) * SC.covariance;
 	return SC;
 }
 
-StateAndCovariance& KalmanMath::prediction(StateAndCovariance& SC) {
+StateAndCovariance& KalmanMath::prediction(StateAndCovariance& SC, Matrix& Q) {
 	Matrix F = KalmanMath::calculateF();
 	Matrix FTranspose = F.transpose();
 	SC.state = F * SC.state;
-	SC.covariance = (F * SC.covariance) * FTranspose;
+	SC.covariance = (F * SC.covariance) * FTranspose + Q;
 	return SC;
 }
 
 void KalmanMath::kalmanIteration(Matrix& H, StateAndCovariance& SC, Matrix& sensorData, Matrix& R) {
+	Matrix Q = Matrix(3,3);
 	if (H(0, 0) == 1 && H(1, 2) == 1) {
 		KalmanMath::correction(SC, sensorData, H, R);
 	}
@@ -49,7 +47,7 @@ void KalmanMath::kalmanIteration(Matrix& H, StateAndCovariance& SC, Matrix& sens
 		KalmanMath::correction(SC, sensorData, H, R);
 	}
 	else {
-		KalmanMath::prediction(SC);
+		KalmanMath::prediction(SC, Q);
 	}
 	KalmanMath::time_called = clock();
 }

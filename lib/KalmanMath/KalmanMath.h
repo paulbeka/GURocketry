@@ -11,7 +11,7 @@ public:
 	clock_t time_called;
 	Matrix calculateF();
 	StateAndCovariance& correction(StateAndCovariance&, Matrix&, Matrix&, Matrix&);
-	StateAndCovariance& prediction(StateAndCovariance&);
+	StateAndCovariance& prediction(StateAndCovariance&, Matrix&);
 	void kalmanIteration(Matrix&, StateAndCovariance&, Matrix&, Matrix&);
 
 private:
