@@ -8,6 +8,7 @@ using std::istream; using std::ostream; using std::clock; using std::vector;
 using std::pow; 
 
 Matrix KalmanMath::calculateF() {
+
 	clock_t time_difference = clock() - KalmanMath::time_called;
 	double timeInSeconds = time_difference / (double)CLOCKS_PER_SEC;
 	double halfDtSquared = (1.0 / 2.0) * (pow(timeInSeconds, 2.0));
@@ -20,6 +21,7 @@ Matrix KalmanMath::calculateF() {
 }
 
 StateAndCovariance& KalmanMath::correction(StateAndCovariance& SC, Matrix& sensorData, Matrix& H) {
+	
 	vector<vector<double>> RList = { { pow(0.3,2), 0 }, { 0, pow(0.0147,2) } };
 	Matrix R = Matrix(RList, 2, 2);
 	Matrix post = Matrix(3, 3);
@@ -29,10 +31,12 @@ StateAndCovariance& KalmanMath::correction(StateAndCovariance& SC, Matrix& senso
 	SC.state = SC.state + kalmanGain * (sensorData - H * SC.state);
 	SC.covariance = (identity_3 - kalmanGain * H) * SC.covariance;
 	return SC;
+
 }
 
 StateAndCovariance& KalmanMath::prediction(StateAndCovariance& SC) {
-	Matrix Q = Matrix(3,3);
+	vector<vector<double>> QList = { {1,0,0}, {0,1,0}, {0,0,1} };
+	Matrix Q = Matrix(QList, 3,3);
 	Matrix F = KalmanMath::calculateF();
 	Matrix FTranspose = F.transpose();
 	SC.state = F * SC.state;
