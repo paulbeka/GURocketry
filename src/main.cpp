@@ -50,6 +50,7 @@ void setup() {
 
 void loop() {
 
-  currentState = calculator.kalmanIteration(H, currentState, getSensorReadings());
+  Matrix sensorValues =  getSensorReadings();
+  currentState = calculator.kalmanIteration(currentState, sensorValues, H);
 
 }
