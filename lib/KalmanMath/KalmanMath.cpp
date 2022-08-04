@@ -2,7 +2,7 @@
 #include "KalmanMath.h"
 #include <ctime>
 #include <cmath>
-#include <Windows.h>
+#include <Arduino.h>
 
 using std::istream; using std::ostream; using std::clock; using std::vector;
 using std::pow; 
@@ -14,7 +14,7 @@ Matrix KalmanMath::calculateF() {
 	double halfDtSquared = (1.0 / 2.0) * (pow(timeInSeconds, 2.0));
 	vector<vector<double>> matrixList = { {1, timeInSeconds, halfDtSquared}, {0, 1, timeInSeconds}, {0,0,1} };
 	Matrix F = Matrix(matrixList, 3, 3);
-	Sleep(3000);
+	delay(3000);
 	KalmanMath::time_called = clock();
 	return F;
 
@@ -52,25 +52,25 @@ void KalmanMath::kalmanIteration(Matrix& H, StateAndCovariance& SC, Matrix& sens
 	KalmanMath::time_called = clock();
 }
 
-int main() {
+// int main() {
 	
-	KalmanMath km;
-	StateAndCovariance SC;
-	vector<vector<double>> HList = { {1,0,0}, {0,0,1} };
-	Matrix sensorData = Matrix(2,1);
-	Matrix H = Matrix(HList, 2, 3);
-	Matrix R = Matrix(2, 2);
-	std::cout << "H Matrix: " << '\n' << H << '\n';
-	std::cout << "R Matrix: " << '\n' << R << '\n';
-	std::cout << "sensorData Matrix: " << '\n' << sensorData << '\n';
+// 	KalmanMath km;
+// 	StateAndCovariance SC;
+// 	vector<vector<double>> HList = { {1,0,0}, {0,0,1} };
+// 	Matrix sensorData = Matrix(2,1);
+// 	Matrix H = Matrix(HList, 2, 3);
+// 	Matrix R = Matrix(2, 2);
+// 	std::cout << "H Matrix: " << '\n' << H << '\n';
+// 	std::cout << "R Matrix: " << '\n' << R << '\n';
+// 	std::cout << "sensorData Matrix: " << '\n' << sensorData << '\n';
 
-	SC.state = Matrix(3, 1);
-	SC.covariance = Matrix(3, 3);
-	km.time_called = clock();
-	km.kalmanIteration(H, SC, sensorData, R);
-	// std::cout << SC.state << '\n';
-	// std::cout << SC.covariance << '\n';
+// 	SC.state = Matrix(3, 1);
+// 	SC.covariance = Matrix(3, 3);
+// 	km.time_called = clock();
+// 	km.kalmanIteration(H, SC, sensorData, R);
+// 	// std::cout << SC.state << '\n';
+// 	// std::cout << SC.covariance << '\n';
 
-	return 0;
-}
+// 	return 0;
+// }
 
