@@ -4,18 +4,22 @@
 #include <cmath>
 #include <Arduino.h>
 
-using std::istream; using std::ostream; using std::clock; using std::vector;
+using std::istream; using std::ostream; using std::vector;
 using std::pow; 
+
+void KalmanMath::initializeKalman() {
+	KalmanMath::time_called = millis();
+}
 
 Matrix KalmanMath::calculateF() {
 
-	clock_t time_difference = clock() - KalmanMath::time_called;
+	unsigned long time_difference = millis() - KalmanMath::time_called;
 	double timeInSeconds = time_difference / (double)CLOCKS_PER_SEC;
 	double halfDtSquared = (1.0 / 2.0) * (pow(timeInSeconds, 2.0));
 	vector<vector<double>> matrixList = { {1, timeInSeconds, halfDtSquared}, {0, 1, timeInSeconds}, {0,0,1} };
 	Matrix F = Matrix(matrixList, 3, 3);
 	delay(3000);
-	KalmanMath::time_called = clock();
+	KalmanMath::time_called = millis();
 	return F;
 
 }
@@ -54,7 +58,7 @@ StateAndCovariance& KalmanMath::kalmanIteration(StateAndCovariance& SC, Matrix& 
 	else {
 		KalmanMath::prediction(SC);
 	}
-	KalmanMath::time_called = clock();
+	KalmanMath::time_called = millis();
 
 	return SC;
 }

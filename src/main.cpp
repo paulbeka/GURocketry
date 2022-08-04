@@ -2,24 +2,24 @@
 #include "../lib/KalmanMath/KalmanMath.h"
 
 #include "sensors/altimeter.cpp"
-#include "sensors/IMU.cpp"
+#include "sensors/IMUSensor.cpp"
 #include "sensors/GPS_parseData.cpp"
 #include <Matrix.h>
 #include <cmath>
 
 
 Adafruit_MPL3115A2 altSensor;
-IMU imu;
+IMUSensor imuSensor;
 GPSClass GPSSensor;
 
 KalmanMath calculator;
 Matrix H;
-StateAndCovariance& currentState;
+//StateAndCovariance& currentState;
 
 Matrix getSensorReadings() {
   std::vector<double> temp;
   temp.push_back(altSensor.getAltitude());
-  temp.push_back(imu.getAcceleration());
+  temp.push_back(imuSensor.getAcceleration());
   std::vector<std::vector<double>> initialReadings;
   initialReadings.push_back(temp);
   Matrix initialMatrix = Matrix(initialReadings, 2, 1);
@@ -28,29 +28,36 @@ Matrix getSensorReadings() {
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(9600);
   
   // sensors
+  Serial.println("Initializing sensors...");
   altSensor = Adafruit_MPL3115A2();
-  imu = IMU();  
+  Serial.println("Initialized altitude senror.");
+  imuSensor = IMUSensor();
+  imuSensor.setup();
+  Serial.println("Initialized IMU senror.");
   GPSSensor = GPSClass();
+  Serial.println("Initialized GPS senror.");
 
   calculator = KalmanMath();
 
-  std::vector<std::vector<double>> initialH(2, std::vector<double>(3, 0));
-  initialH[0][0] = 1;
-  initialH[1][2] = 1;
-  H = Matrix(initialH, 3, 2);
+  std::vector<std::vector<double>> initialH = { {1, 0, 0}, {0, 0, 1} };
+  H = Matrix(initialH, 2, 3);
+
+  calculator.initializeKalman();
+  Serial.println("Initialized Kalman. Starting main loop.");
 
   // initial SC
-  currentState = {
+  // currentState = {
     
-  };
+  // };
   
 }
 
 void loop() {
 
   Matrix sensorValues =  getSensorReadings();
-  currentState = calculator.kalmanIteration(currentState, sensorValues, H);
+  //currentState = calculator.kalmanIteration(currentState, sensorValues, H);
 
 }

@@ -5,11 +5,13 @@
 
 #include "StateAndCovariance.h"
 #include "Matrix.h"
+#include <ctime>
 
 
 class KalmanMath  {
 public:
-	clock_t time_called;
+	unsigned long time_called;
+	void initializeKalman();
 	Matrix calculateF();
 	StateAndCovariance& correction(StateAndCovariance&, Matrix&, Matrix&);
 	StateAndCovariance& prediction(StateAndCovariance&);

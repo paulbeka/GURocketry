@@ -40,6 +40,8 @@ File sdFile;
 // Global variable declarations
 String gpsLat;
 String gpsLng;
+// String altitude;
+// String 
 char gpsData[36];  // HHMMSSCC_00000.000000_00000.000000
 char fileName[28]; // DDMMYY_HHMMSSCC_gps_data.txt
 int messageNum = 0;

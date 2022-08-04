@@ -7,14 +7,12 @@
 #define BNO055_SAMPLERATE_DELAY_MS (100)
 
 
-class IMU {
+class IMUSensor {
 
     Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 
 public:
-    void setup(void) {
-        Serial.begin(9600);
-        Serial.println("Orientation Sensor Test");
+    void setup() {
 
         /* Initialise the sensor */
         if(!bno.begin()) {
