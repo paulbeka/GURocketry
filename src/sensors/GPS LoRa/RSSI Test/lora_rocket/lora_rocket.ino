@@ -1,10 +1,11 @@
-// RSSI Test w/ GPS - Rocket
+// RSSI Test - Rocket
 // Cameron Fraser | GUR Software | 5/8/22
 
 // Libraries
 #include <LoRa.h>             // LoRa transmission
 #include <TinyGPS++.h>        // gps library
 #include <SoftwareSerial.h>   // interface with gps
+
 
 // gps pins
 #define RXPin 0
@@ -18,12 +19,13 @@
 // LoRa Freq
 #define LoRaFreq 433E6 // operating on 433MHz
 
+
 // Object declarations
 SoftwareSerial ss(RXPin, TXPin); // Serial connection to the GPS device
 TinyGPSPlus gps;                 // Tiny GPS++ object
 
+
 // Global variable declarations
-char gpsData[36];  // HHMMSSCC_00000.000000_00000.000000
 int messageNum = 0;
 
 
@@ -53,32 +55,22 @@ void setup() {
   }
   LoRa.setTxPower(23); // increase power and therefore range by +20db (5-23 available)
   Serial.println("LoRa init successful.\n");
-
   
   Serial.println("Set up complete.\n");
 }
 
 void loop() {
-  while (ss.available() > 0){
-    if (gps.encode(ss.read())){
-      if (gps.location.isValid()){
-        if (gps.location.isUpdated()){
-          // get gpsData
-          sprintf(gpsData, "%lu_%5.6f_%5.6f", gps.time.value(), gps.location.lat(), gps.location.lng());
-          Serial.print("GPS Updated: "); Serial.println(gpsData);
+  // generate random data so we can test indoors
+  int testData = random(100);
 
-
-          // send via LoRa
-          LoRa.beginPacket();
-          LoRa.print("#");
-          LoRa.print(messageNum);
-          LoRa.print(" ");
-          LoRa.print(gpsData);
-          LoRa.endPacket();
-          messageNum++;
-          Serial.print(gpsData); Serial.println(" successfully sent via LoRa.");
-        }
-      }
-    }
-  }
+  // send via LoRa
+  LoRa.beginPacket();
+  LoRa.print("#");
+  LoRa.print(messageNum);
+  LoRa.print(" ");
+  LoRa.print(testData);
+  LoRa.endPacket();
+  messageNum++;
+  Serial.print(testData); Serial.println(" successfully sent via LoRa.");
+  delay(1000); // prevent spam
 }

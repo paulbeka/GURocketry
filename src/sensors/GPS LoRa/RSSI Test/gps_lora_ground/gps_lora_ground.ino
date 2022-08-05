@@ -29,12 +29,12 @@ void setup() {
   LoRa.setTxPower(20); // increase power and therefore range by +20db (5-23 available)
   Serial.println("LoRa init successful.\n");
   Serial.println("Set up complete.\n");
+
+  Serial.println("Awaiting GPS Data...");
 }
 
 void loop() {
   int charCounter = 0;
-  String gpsData = ""; // HHMMSSCC_00000.000000_00000.000000
-  
   int packetSize = LoRa.parsePacket();
 
   if (packetSize) {
