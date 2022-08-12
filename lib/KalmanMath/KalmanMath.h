@@ -5,16 +5,21 @@
 
 #include "StateAndCovariance.h"
 #include "Matrix.h"
+#include <ctime>
+
 
 class KalmanMath  {
 public:
-	clock_t time_called;
+	unsigned long time_called;
+	void initializeKalman();
 	Matrix calculateF();
-	StateAndCovariance& correction(StateAndCovariance&, Matrix&, Matrix&, Matrix&);
+	StateAndCovariance& correction(StateAndCovariance&, Matrix&, Matrix&);
 	StateAndCovariance& prediction(StateAndCovariance&);
-	void kalmanLoop(Matrix&, StateAndCovariance&, Matrix&, Matrix&);
+	StateAndCovariance& kalmanIteration(StateAndCovariance&, Matrix&, Matrix&);
 
 private:
+	Matrix R; 
+	Matrix Q;
 	Matrix identity_3 = Matrix::createIdentity(3);
 };
 

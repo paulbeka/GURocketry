@@ -7,14 +7,12 @@
 #define BNO055_SAMPLERATE_DELAY_MS (100)
 
 
-class Barometer {
+class IMUSensor {
 
     Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 
 public:
-    void setup(void) {
-        Serial.begin(9600);
-        Serial.println("Orientation Sensor Test");
+    void setup() {
 
         /* Initialise the sensor */
         if(!bno.begin()) {
@@ -35,5 +33,12 @@ public:
         String finalStr = String(String(event.orientation.x) + ";" + String(event.orientation.y) + ";" + String(event.orientation.z));
         delay(BNO055_SAMPLERATE_DELAY_MS);
         return finalStr;
+    }
+
+    float getAcceleration() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.acceleration.y;
     }
 };

@@ -38,11 +38,9 @@ public:
 				counter += 1;
 				if (c) {
 					// Need to use 'c' to avoid unused variable error
-					Serial.print("");
 				}
 				// Delay for finding fix (0.1s / 100ms)
 				delay(100);
-				Serial.println("Waiting on fix...");
 				if (counter == 10) {
 					dataList[0] = 0;
 					dataList[1] = 0;
@@ -51,7 +49,6 @@ public:
 					return dataList;
 				}
 			}
-			Serial.println("Fix: " + GPS.fix);
 			// Latitude format = DDMM.MMMM (degrees then minutes format)
 			// Longitude format = DDDMM.MMMM (degrees then minutes format)
 

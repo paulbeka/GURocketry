@@ -75,9 +75,9 @@ Matrix& Matrix::operator=(const Matrix& copyMatrix) {
 }
 
 Matrix& Matrix::operator+=(const Matrix& addingMatrix) {
-	if (rows_ != addingMatrix.rows_ || cols_ != addingMatrix.cols_) {
-		throw std::invalid_argument("Matrix must be the same size");
-	}
+	// if (rows_ != addingMatrix.rows_ || cols_ != addingMatrix.cols_) {
+	//		TODO
+	// }
 	for (int i = 0; i < rows_; i++) {
 		for (int j = 0; j < cols_; j++) {
 			p[i][j] += addingMatrix.p[i][j];
@@ -87,9 +87,9 @@ Matrix& Matrix::operator+=(const Matrix& addingMatrix) {
 }
 
 Matrix& Matrix::operator-=(const Matrix& minusMatrix) {
-	if (rows_ != minusMatrix.rows_ || cols_ != minusMatrix.cols_) {
-		throw std::invalid_argument("Matrix must be the same size");
-	}
+	// if (rows_ != minusMatrix.rows_ || cols_ != minusMatrix.cols_) {
+	// 	throw std::invalid_argument("Matrix must be the same size");
+	// }
 	for (int i = 0; i < rows_; i++) {
 		for (int j = 0; j < cols_; j++) {
 			p[i][j] -= minusMatrix.p[i][j];
@@ -99,9 +99,9 @@ Matrix& Matrix::operator-=(const Matrix& minusMatrix) {
 }
 
 Matrix& Matrix::operator*=(const Matrix& multiplyMatrix) {
-	if (cols_ != multiplyMatrix.rows_) {
-		throw std::invalid_argument("Rows from first matrix must match column from the second or dimensions match");
-	}
+	// if (cols_ != multiplyMatrix.rows_) {
+	// 	throw std::invalid_argument("Rows from first matrix must match column from the second or dimensions match");
+	// }
 	Matrix temp(rows_, multiplyMatrix.cols_);
 	for (int i = 0; i < temp.rows_; i++) {
 		for (int j = 0; j < temp.cols_; j++) {
@@ -132,9 +132,9 @@ Matrix& Matrix::operator/=(double num) {
 }
 
 Matrix Matrix::operator^(int num) {
-	if (rows_ != cols_) {
-		throw std::invalid_argument("Matrix must be square for a power to be raised");
-	}
+	// if (rows_ != cols_) {
+	// 	throw std::invalid_argument("Matrix must be square for a power to be raised");
+	// }
 	Matrix temp(*this);
 	return expHelper(temp, num);
 }
