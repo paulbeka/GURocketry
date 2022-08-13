@@ -1,4 +1,4 @@
-// Ground Station RSSI Test
+// RSSI Test - Ground Station
 // Cameron Fraser | GUR Software | 5/8/22
 
 // Libraries
@@ -17,7 +17,7 @@ void setup() {
   // Serial init
   Serial.begin(9600);
   while (!Serial);
-  Serial.println("GUR | Ground Station RSSI Test");
+  Serial.println("GUR | RSSI Test - Ground Station");
 
   // LoRa init
   Serial.println("Initialising LoRa...");
@@ -38,7 +38,7 @@ void loop() {
   int packetSize = LoRa.parsePacket();
 
   if (packetSize) {
-      Serial.print("Data received: ");
+      Serial.print("Data recieved: ");
 
       while (LoRa.available()){
         char incoming = (char)LoRa.read(); 
