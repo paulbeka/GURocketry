@@ -89,7 +89,7 @@ void setup() {
 
 void loop() {
   int charCounter = 0;
-  bool gotMessageLength = false;
+  bool gotMessageNumber = false;
   int messageNumberLength = 0;
   String gpsData = ""; // HHMMSSCC_00000.000000_00000.000000
   
@@ -105,11 +105,11 @@ void loop() {
           break;
         }
         
-        if (!gotMessageLength) {
+        if (!gotMessageNumber) {
           if (isDigit(incoming)) {
             messageNumberLength += 1;
           } else if (incoming == ' ') {
-            gotMessageLength = true;
+            gotMessageNumber = true;
             messageNumberLength += 1;
           }
         }

@@ -3,15 +3,19 @@
 
 #include "sensors/altimeter.cpp"
 #include "sensors/IMUSensor.cpp"
-#include "sensors/GPS_parseData.cpp"
+#include "sensors/GPS.cpp"
+#include "communication/rocket.cpp"
 #include <Matrix.h>
 #include <cmath>
+#include <string>
 
+using std::string; using std::vector;
 
 Adafruit_MPL3115A2 altSensor;
 IMUSensor imuSensor;
-GPSClass GPSSensor;
+GPS gps;
 
+Rocket rocket;
 KalmanMath calculator;
 Matrix H;
 //StateAndCovariance& currentState;
@@ -30,18 +34,22 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
   
+  // LoRa
+  rocket = Rocket();
+  rocket.setup();
+
   // sensors
   Serial.println("Initializing sensors...");
   altSensor = Adafruit_MPL3115A2();
-  Serial.println("Initialized altitude senror.");
+  Serial.println("Initialized altitude sensor.");
   imuSensor = IMUSensor();
   imuSensor.setup();
-  Serial.println("Initialized IMU senror.");
-  GPSSensor = GPSClass();
-  Serial.println("Initialized GPS senror.");
+  Serial.println("Initialized IMU sensor.");
+  gps = GPS();
+  gps.setup();
+  Serial.println("Initialized GPS sensor.");
 
   calculator = KalmanMath();
-
 }
 
 void loop() {
