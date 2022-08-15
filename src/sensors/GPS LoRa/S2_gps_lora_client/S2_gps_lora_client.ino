@@ -119,7 +119,8 @@ void setup() {
   Serial.println("\nWaiting for GPS Lock...");
   while(!gps.location.isValid()){
     while(ss.available() > 0){
-      if (gps.encode(ss.read())){
+      bool successfully_encoded = gps.encode(ss.read());
+      if (successfully_encoded){
         if (gps.location.isValid()){
           gpsLat = gps.location.lat();
           gpsLng = gps.location.lng();
