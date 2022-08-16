@@ -1,50 +1,44 @@
 #include <Arduino.h>
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
-#include <SD.h>
-#include <string>
+#include "../headers/GPS.h"
 
 #define RXPin 0
 #define TXPin 1
 
-using std::string;
+SoftwareSerial GPS::ss(RXPin, TXPin);
+TinyGPSPlus GPS::tinyGPS;
 
-// MAKE HEADER FILE 
-// SS NOT WORKING / BUILDING
-SoftwareSerial ss(RXPin, TXPin);
+GPS::GPS() { 
+}
 
-class GPS {
-    TinyGPSPlus gps = TinyGPSPlus();
-    
-public:
-    void setup() {
-        Serial.println("Initialising GPS Client");
-        ss.begin(9600);
-        if (!ss) {
-            Serial.println("Error initialising Software Serial!");
-            while (1);
-        }
+void GPS::setup() {
+    Serial.println("Initialising GPS Client");
+    this->ss.begin(9600);
+    if (!this->ss) {
+        Serial.println("Error initialising Software Serial!");
+        while (1);
     }
+}
 
-    double getGPSLat() {
-        if (isGPSValid()) {
-            return gps.location.lat();
-        }
-        return 0.0;
+double GPS::getGPSLat() {
+    if (isGPSValid()) {
+        return this->tinyGPS.location.lat();
     }
+    return 0.0;
+}
 
-    double getGPSLong() {
-        if (isGPSValid()) {
-            return gps.location.lng();
-        }
-        return 0.0;
+double GPS::getGPSLong() {
+    if (isGPSValid()) {
+        return this->tinyGPS.location.lng();
     }
+    return 0.0;
+}
 
-    bool isGPSValid() {
-        while (ss.available() > 0) {
-            bool isEncoded = gps.encode(ss.read());
-            return isEncoded && gps.location.isValid();
-        }
-        return false;
+bool GPS::isGPSValid() {
+    while (this->ss.available() > 0) {
+        bool isEncoded = this->tinyGPS.encode(this->ss.read());
+        return isEncoded && this->tinyGPS.location.isValid();
     }
-};
+    return false;
+}

@@ -3,7 +3,7 @@
 
 #include "sensors/altimeter.cpp"
 #include "sensors/IMUSensor.cpp"
-#include "sensors/GPS.cpp"
+#include "headers/GPS.h"
 #include "communication/rocket.cpp"
 #include <Matrix.h>
 #include <cmath>
