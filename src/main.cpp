@@ -10,8 +10,6 @@
 #include "headers/GPS.h"
 #include "communication/rocket.cpp"
 
-
-
 using std::string; using std::vector;
 
 Adafruit_MPL3115A2 altSensor;
@@ -21,7 +19,7 @@ GPS gps;
 Rocket rocket;
 KalmanMath calculator;
 Matrix H;
-//StateAndCovariance& currentState;
+StateAndCovariance currentState;
 
 Matrix getSensorReadings() {
   std::vector<double> temp;
@@ -32,6 +30,17 @@ Matrix getSensorReadings() {
   Matrix initialMatrix = Matrix(initialReadings, 2, 1);
   return initialMatrix;
 }
+
+Matrix getHValues(Matrix sensorValues) {
+  std::vector<std::vector<double>> HList = {{0,0,0}, {0,0,0}};
+  if (sensorValues(0,0) != 0) {
+    HList[0][0] = 1;
+  }
+  if (sensorValues(0,1) != 0) {
+    HList[1][2] = 1;
+  }
+  return Matrix(HList, 2, 3);
+} 
 
 String formattedMessage(double gpsLat, double gpsLong, uint32_t gpsTime) {
   String gpsTimeString = String(gpsTime);
@@ -60,12 +69,15 @@ void setup() {
   gps.setup();
   Serial.println("Initialized GPS sensor.");
 
+  // Kalman
   calculator = KalmanMath();
+  currentState = {.state = Matrix(3,1), .covariance = Matrix(3,3)};
 }
 
 void loop() {
   Matrix sensorValues = getSensorReadings();
-  //currentState = calculator.kalmanIteration(currentState, sensorValues, H);
+  H = getHValues(sensorValues);
+  currentState = calculator.kalmanIteration(currentState, sensorValues, H);
   double gpsLat = gps.getLat();
   double gpsLong = gps.getLong();
   uint32_t gpsTime = gps.getTime();
