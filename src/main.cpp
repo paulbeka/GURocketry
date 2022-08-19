@@ -33,14 +33,7 @@ Matrix getSensorReadings() {
   return initialMatrix;
 }
 
-// std::string formatMessage(double gpsLat, double gpsLong, uint32_t gpsTime) {
-//   std::ostringstream oss;
-//   oss << "Time: " << gpsTime << " | Lat: " << gpsLat << " Long: " << gpsLong << '\n';
-//   std::string formattedString = oss.str();
-//   return formattedString; 
-// }
-
-String formattedStringMessage(double gpsLat, double gpsLong, uint32_t gpsTime) {
+String formattedMessage(double gpsLat, double gpsLong, uint32_t gpsTime) {
   String gpsTimeString = String(gpsTime);
   String gpsLatString = String(gpsLat);
   String gpsLongString = String(gpsLong);
@@ -76,7 +69,7 @@ void loop() {
   double gpsLat = gps.getLat();
   double gpsLong = gps.getLong();
   uint32_t gpsTime = gps.getTime();
-  String message = formattedStringMessage(gpsLat, gpsLong, gpsTime);
+  String message = formattedMessage(gpsLat, gpsLong, gpsTime);
   rocket.sendMessage(message);
 }
 
