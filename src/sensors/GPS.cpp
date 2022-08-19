@@ -21,18 +21,22 @@ void GPS::setup() {
     }
 }
 
-double GPS::getGPSLat() {
+double GPS::getLat() {
     if (isGPSValid()) {
         return this->tinyGPS.location.lat();
     }
     return 0.0;
 }
 
-double GPS::getGPSLong() {
+double GPS::getLong() {
     if (isGPSValid()) {
         return this->tinyGPS.location.lng();
     }
     return 0.0;
+}
+
+uint32_t GPS::getTime() {
+    return this->tinyGPS.time.value();
 }
 
 bool GPS::isGPSValid() {

@@ -1,5 +1,7 @@
 #include <LoRa.h>
 
+#include <string>
+
 // LoRa 
 #define LoRaFreq 433E6
 #define RFM95_CS 10

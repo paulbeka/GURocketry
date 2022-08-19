@@ -1,13 +1,16 @@
 #include <Arduino.h>
-#include "../lib/KalmanMath/KalmanMath.h"
+#include <cmath>
+#include <string>
+#include <sstream>
 
+#include <Matrix.h>
+#include "../lib/KalmanMath/KalmanMath.h"
 #include "sensors/altimeter.cpp"
 #include "sensors/IMUSensor.cpp"
 #include "headers/GPS.h"
 #include "communication/rocket.cpp"
-#include <Matrix.h>
-#include <cmath>
-#include <string>
+
+
 
 using std::string; using std::vector;
 
@@ -28,6 +31,21 @@ Matrix getSensorReadings() {
   initialReadings.push_back(temp);
   Matrix initialMatrix = Matrix(initialReadings, 2, 1);
   return initialMatrix;
+}
+
+// std::string formatMessage(double gpsLat, double gpsLong, uint32_t gpsTime) {
+//   std::ostringstream oss;
+//   oss << "Time: " << gpsTime << " | Lat: " << gpsLat << " Long: " << gpsLong << '\n';
+//   std::string formattedString = oss.str();
+//   return formattedString; 
+// }
+
+String formattedStringMessage(double gpsLat, double gpsLong, uint32_t gpsTime) {
+  String gpsTimeString = String(gpsTime);
+  String gpsLatString = String(gpsLat);
+  String gpsLongString = String(gpsLong);
+  String formattedString = String("Time: " + gpsTimeString + " | Lat: " + gpsLatString + " Long: " + gpsLongString);
+  return formattedString;
 }
 
 void setup() {
@@ -53,7 +71,12 @@ void setup() {
 }
 
 void loop() {
-
-  Matrix sensorValues =  getSensorReadings();
+  Matrix sensorValues = getSensorReadings();
   //currentState = calculator.kalmanIteration(currentState, sensorValues, H);
+  double gpsLat = gps.getLat();
+  double gpsLong = gps.getLong();
+  uint32_t gpsTime = gps.getTime();
+  String message = formattedStringMessage(gpsLat, gpsLong, gpsTime);
+  rocket.sendMessage(message);
 }
+

@@ -12,8 +12,9 @@ class GPS {
     public:
         GPS();
         void setup();
-        double getGPSLat();
-        double getGPSLong();
+        double getLat();
+        double getLong();
+        uint32_t getTime();
         bool isGPSValid();
 };
 
