@@ -18,7 +18,6 @@ Matrix KalmanMath::calculateF() {
 	double halfDtSquared = (1.0 / 2.0) * (pow(timeInSeconds, 2.0));
 	vector<vector<double>> matrixList = { {1, timeInSeconds, halfDtSquared}, {0, 1, timeInSeconds}, {0,0,1} };
 	Matrix F = Matrix(matrixList, 3, 3);
-	delay(3000);
 	KalmanMath::time_called = millis();
 	return F;
 
@@ -39,8 +38,9 @@ StateAndCovariance& KalmanMath::correction(StateAndCovariance& SC, Matrix& senso
 }
 
 StateAndCovariance& KalmanMath::prediction(StateAndCovariance& SC) {
-	vector<vector<double>> QList = { {1,0,0}, {0,1,0}, {0,0,1} };
+	vector<vector<double>> QList = { {50,0,0}, {0,0,0}, {0,0,1} };
 	Matrix Q = Matrix(QList, 3,3);
+	Q = Q * 0.01;
 	Matrix F = KalmanMath::calculateF();
 	Matrix FTranspose = F.transpose();
 	SC.state = F * SC.state;
