@@ -14,29 +14,43 @@ GPS::GPS() {
 
 void GPS::setup() {
     Serial.println("Initialising GPS Client");
-    this->ss.begin(9600);
-    if (!this->ss) {
+    ss.begin(9600);
+    if (!ss) {
         Serial.println("Error initialising Software Serial!");
-        while (1);
     }
 }
 
-double GPS::getLat() {
-    if (isGPSValid()) {
-        return this->tinyGPS.location.lat();
+double GPS::getLong() {
+    while (ss.available() > 0) {
+        if (tinyGPS.encode(ss.read())) {
+            if (tinyGPS.location.isValid()) {
+                return tinyGPS.location.lng();
+            }
+        }
     }
     return 0.0;
 }
 
-double GPS::getLong() {
-    if (isGPSValid()) {
-        return this->tinyGPS.location.lng();
+double GPS::getLat() {
+    while (ss.available() > 0) {
+        if (tinyGPS.encode(this->ss.read())) {
+            if (tinyGPS.location.isValid()) {
+                return tinyGPS.location.lat();
+            }
+        }
     }
     return 0.0;
 }
 
 uint32_t GPS::getTime() {
-    return this->tinyGPS.time.value();
+    while (ss.available() > 0) {
+        if (tinyGPS.encode(this->ss.read())) {
+            if (tinyGPS.location.isValid()) {
+                return tinyGPS.time.value();
+            }
+        }
+    }
+    return 0.0;
 }
 
 bool GPS::isGPSValid() {

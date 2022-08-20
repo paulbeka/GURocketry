@@ -1,16 +1,24 @@
 #include <Wire.h>
 #include <Adafruit_MPL3115A2.h>
 
-
-class Altimeter {
-
+class AltimeterSensor {
 public:
-  Adafruit_MPL3115A2 altSetup() {
-    Adafruit_MPL3115A2 baro = Adafruit_MPL3115A2();
+  Adafruit_MPL3115A2 baro;
+
+  void setup() {
     if (!baro.begin()) {
-      Serial.println("Couldn't find sensor");
+      Serial.println("Could not find sensor. Check wiring.");
+      while(1);
     }
-    return baro;
+
+    // use to set sea level pressure for current location
+    // this is needed for accurate altitude measurement
+    // STD SLP = 1013.26 hPa
+    baro.setSeaPressure(1013.26);
+  }
+
+  float getAltitude() {
+    return baro.getAltitude();
   }
 
 };
