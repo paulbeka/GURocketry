@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SD.h>
 #include <cmath>
 #include <string>
 #include <sstream>
@@ -12,6 +13,7 @@
 
 using std::string; using std::vector;
 
+char filename[9] = "data.txt";
 Adafruit_MPL3115A2 altSensor;
 IMUSensor imuSensor;
 GPS gps;
@@ -20,6 +22,12 @@ Rocket rocket;
 KalmanMath calculator;
 Matrix H;
 StateAndCovariance currentState;
+
+void writeToFile(String message) {
+  File sdFile = SD.open(filename, FILE_WRITE);
+  sdFile.println(message);
+  sdFile.close();
+}
 
 Matrix getSensorReadings() {
   std::vector<double> temp;
@@ -58,6 +66,14 @@ void setup() {
   rocket = Rocket();
   rocket.setup();
 
+  // SD
+  if (!SD.begin(BUILTIN_SDCARD)) {
+    Serial.println("Error initialising SD card");
+    while (1);
+  }
+  String line = String("-------------------");
+  writeToFile(line);
+
   // sensors
   Serial.println("Initializing sensors...");
   altSensor = Adafruit_MPL3115A2();
@@ -82,6 +98,8 @@ void loop() {
   double gpsLong = gps.getLong();
   uint32_t gpsTime = gps.getTime();
   String message = formattedMessage(gpsLat, gpsLong, gpsTime);
+  writeToFile(message);
   rocket.sendMessage(message);
+  
 }
 
