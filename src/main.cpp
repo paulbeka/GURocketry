@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SPI.h>
 #include <SD.h>
 #include <SoftwareSerial.h>
 #include <Adafruit_GPS.h>
@@ -12,6 +13,8 @@
 #include "sensors/IMUSensor.cpp"
 #include "headers/GPS.h"
 #include "communication/rocket.cpp"
+
+#define CS_PIN 10 // teensy 4.0 cspin = 10 
 
 using std::string; using std::vector;
 
@@ -63,6 +66,7 @@ String formattedMessage(double gpsLat, double gpsLong, String gpsTime, double ac
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
+  
   // LoRa
   rocket = Rocket();
   rocket.setup();
@@ -72,8 +76,13 @@ void setup() {
   //   Serial.println("Error initialising SD card");
   //   while (1);
   // }
+  // above may not work due to no BUILTIN_SDCARD and if BUILTIN_SDCARD does not default to 10
+  if (!SD.begin(CS_PIN)) {
+    Serial.println("Error initialising SD card");
+    while (1);
+  }
   String line = String("-------------------");
-  // writeToFile(line);
+  writeToFile(line);
 
   // sensors
   Serial.println("Initializing sensors...");
@@ -103,7 +112,7 @@ void loop() {
   // currentState = calculator.kalmanIteration(currentState, sensorValues, H);
   String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
   Serial.println(message);
-  // writeToFile(message);
+  writeToFile(message);
   rocket.sendMessage(message);
 }
 
