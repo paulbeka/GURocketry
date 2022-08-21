@@ -2,20 +2,19 @@
 #define GPS_H_
 
 #include <Arduino.h>
-#include <TinyGPS++.h>
+#include <Adafruit_GPS.h>
 #include <SoftwareSerial.h>
 
 class GPS {
     private:
-        static SoftwareSerial ss;
-        static TinyGPSPlus tinyGPS;
+        bool refreshNMEA();
     public:
         GPS();
         void setup();
-        double getLat();
-        double getLong();
-        uint32_t getTime();
-        bool isGPSValid();
+        float getLat();
+        float getLong();
+        String getTime();
+        bool isFixFound();
 };
 
 #endif 

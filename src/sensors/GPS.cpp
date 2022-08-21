@@ -1,62 +1,56 @@
 #include <Arduino.h>
-#include <TinyGPS++.h>
-#include <SoftwareSerial.h>
+#include <Adafruit_GPS.h>
 #include "../headers/GPS.h"
 
 #define RXPin 0
 #define TXPin 1
 
-SoftwareSerial GPS::ss(RXPin, TXPin);
-TinyGPSPlus GPS::tinyGPS;
+Adafruit_GPS adafruit_gps;
 
 GPS::GPS() { 
 }
 
 void GPS::setup() {
-    Serial.println("Initialising GPS Client");
-    ss.begin(9600);
-    if (!ss) {
-        Serial.println("Error initialising Software Serial!");
+    Serial.println("Initialising GPS sensor");
+    adafruit_gps.begin(115200);
+    adafruit_gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+    adafruit_gps.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
+    Serial.println("Initialised sensor");
+    while (!adafruit_gps.fix) {
+        Serial.println("No fix found...");
+        refreshNMEA();
+        delay(2000);
     }
+    Serial.println("Fix found!");
 }
 
-double GPS::getLong() {
-    while (ss.available() > 0) {
-        if (tinyGPS.encode(ss.read())) {
-            if (tinyGPS.location.isValid()) {
-                return tinyGPS.location.lng();
-            }
-        }
-    }
-    return 0.0;
+float GPS::getLong() {
+    refreshNMEA();
+    return adafruit_gps.longitude;
 }
 
-double GPS::getLat() {
-    while (ss.available() > 0) {
-        if (tinyGPS.encode(this->ss.read())) {
-            if (tinyGPS.location.isValid()) {
-                return tinyGPS.location.lat();
-            }
-        }
-    }
-    return 0.0;
+float GPS::getLat() {
+    refreshNMEA();
+    return adafruit_gps.longitude;
 }
 
-uint32_t GPS::getTime() {
-    while (ss.available() > 0) {
-        if (tinyGPS.encode(this->ss.read())) {
-            if (tinyGPS.location.isValid()) {
-                return tinyGPS.time.value();
-            }
-        }
-    }
-    return 0.0;
+String GPS::getTime() {
+    refreshNMEA();
+    uint8_t hour = adafruit_gps.hour;
+    uint8_t minute = adafruit_gps.minute;
+    uint8_t seconds = adafruit_gps.seconds;
+    return String(String(hour) + ":" + String(minute) + ":" + String(seconds));
 }
 
-bool GPS::isGPSValid() {
-    while (this->ss.available() > 0) {
-        bool isEncoded = this->tinyGPS.encode(this->ss.read());
-        return isEncoded && this->tinyGPS.location.isValid();
+bool GPS::isFixFound() {
+    return adafruit_gps.fix;
+}
+
+bool GPS::refreshNMEA() {
+    adafruit_gps.read();
+    if (adafruit_gps.newNMEAreceived()) {
+        adafruit_gps.parse(adafruit_gps.lastNMEA());
+        return true;
     }
     return false;
 }
