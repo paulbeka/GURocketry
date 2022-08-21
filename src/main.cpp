@@ -56,7 +56,7 @@ String formattedMessage(double gpsLat, double gpsLong, String gpsTime, double ac
   String gpsLatString = String(gpsLat);
   String gpsLongString = String(gpsLong);
   String formattedString = String("Time: " + gpsTime + " | Lat: " + gpsLatString + " Long: " + gpsLongString);
-  formattedString += String("| Acceleration: " + String(accel) + " Altitude: " + String(alt));
+  formattedString += String(" | Acceleration: " + String(accel) + " Altitude: " + String(alt));
   return formattedString;
 }
 
