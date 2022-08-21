@@ -1,11 +1,8 @@
 #include <Arduino.h>
-#include <Adafruit_GPS.h>
 #include "../headers/GPS.h"
 
 #define RXPin 0
 #define TXPin 1
-
-Adafruit_GPS adafruit_gps;
 
 GPS::GPS() { 
 }
