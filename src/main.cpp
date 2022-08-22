@@ -14,7 +14,7 @@
 #include "headers/GPS.h"
 #include "communication/rocket.cpp"
 
-#define CS_PIN 10 // teensy 4.0 cspin = 10 
+#define CS_PIN 10 
 
 using std::string; using std::vector;
 
@@ -72,15 +72,11 @@ void setup() {
   rocket.setup();
 
   // SD
-  // if (!SD.begin(BUILTIN_SDCARD)) {
-  //   Serial.println("Error initialising SD card");
-  //   while (1);
-  // }
-  // above may not work due to no BUILTIN_SDCARD and if BUILTIN_SDCARD does not default to 10
-  if (!SD.begin(CS_PIN)) {
+  while (!SD.begin(CS_PIN)) {
     Serial.println("Error initialising SD card");
-    while (1);
+    delay(300);
   }
+
   String line = String("-------------------");
   writeToFile(line);
 

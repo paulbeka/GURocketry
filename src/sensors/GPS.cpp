@@ -39,10 +39,6 @@ String GPS::getTime() {
     return String(String(hour) + ":" + String(minute) + ":" + String(seconds));
 }
 
-bool GPS::isFixFound() {
-    return adafruit_gps.fix;
-}
-
 bool GPS::refreshNMEA() {
     adafruit_gps.read();
     if (adafruit_gps.newNMEAreceived()) {
@@ -50,4 +46,8 @@ bool GPS::refreshNMEA() {
         return true;
     }
     return false;
+}
+
+bool GPS::isFixFound() {
+    return adafruit_gps.fix;
 }
