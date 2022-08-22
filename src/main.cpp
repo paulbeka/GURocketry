@@ -15,6 +15,7 @@
 #include "communication/rocket.cpp"
 
 #define CS_PIN 10 
+#define TRANSMIT_LED 21
 
 using std::string; using std::vector;
 
@@ -22,7 +23,7 @@ char filename[9] = "data.txt";
 AltimeterSensor altSensor;
 IMUSensor imuSensor;
 
-GPS gps;
+// GPS gps;
 Rocket rocket;
 KalmanMath calculator;
 Matrix H;
@@ -65,6 +66,7 @@ String formattedMessage(double gpsLat, double gpsLong, String gpsTime, double ac
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(TRANSMIT_LED, OUTPUT);
   Serial.begin(115200);
   
   // LoRa
@@ -76,6 +78,7 @@ void setup() {
     Serial.println("Error initialising SD card");
     delay(300);
   }
+  Serial.println("Initialised SD card");
 
   String line = String("-------------------");
   writeToFile(line);
@@ -88,27 +91,34 @@ void setup() {
   imuSensor = IMUSensor();
   imuSensor.setup();
   Serial.println("Initialized IMU sensor.");
-  gps = GPS();
-  gps.setup();
+  // gps = GPS();
+  // gps.setup();
   Serial.println("Initialized GPS sensor.");
 
   // Kalman
   calculator = KalmanMath();
   currentState = {.state = Matrix(3,1), .covariance = Matrix(3,3)};
+
+  digitalWrite(TRANSMIT_LED, HIGH);
+  delay(3000);
+  digitalWrite(TRANSMIT_LED, LOW);
 }
 
 void loop() {
   float accel = imuSensor.getAcceleration();
   float alt = altSensor.getAltitude();
-  float gpsLat = gps.getLat();
-  float gpsLong = gps.getLong();
-  String gpsTime = gps.getTime();
+  // float gpsLat = gps.getLat();
+  // float gpsLong = gps.getLong();
+  // String gpsTime = gps.getTime();
   // Matrix sensorValues = getSensorReadings();
   // H = getHValues(sensorValues);
   // currentState = calculator.kalmanIteration(currentState, sensorValues, H);
-  String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
-  Serial.println(message);
-  writeToFile(message);
-  rocket.sendMessage(message);
+  // String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
+  // Serial.println(message);
+  // writeToFile(message);
+  digitalWrite(TRANSMIT_LED, HIGH);
+  delay(200);
+  digitalWrite(TRANSMIT_LED, LOW);
+  // rocket.sendMessage(message);
 }
 

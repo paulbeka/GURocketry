@@ -43,6 +43,7 @@ bool GPS::refreshNMEA() {
     adafruit_gps.read();
     if (adafruit_gps.newNMEAreceived()) {
         adafruit_gps.parse(adafruit_gps.lastNMEA());
+        Serial.println("PARSED NMEA");
         return true;
     }
     return false;

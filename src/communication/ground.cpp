@@ -1,7 +1,7 @@
 #include <LoRa.h>
 
 #define LoRaFreq 433E6
-#define RFM95_CS 10
+#define RFM95_CS 6
 #define RFM95_RST 22
 #define RFM95_INT 23
 
