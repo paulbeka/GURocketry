@@ -57,7 +57,7 @@ void setup() {
   }
   Serial.println("Initialised SD card");
 
-  String newSetupLine = String("------time,lat,long,accel,alt-------");
+  String newSetupLine = String("------time,lat,long,accel,alt------");
   writeToFile(newSetupLine);
 
   // sensors
@@ -72,6 +72,7 @@ void setup() {
   gps.setup();
   Serial.println("Initialized GPS sensor.");
 
+  // Setup success light
   digitalWrite(TRANSMIT_LED, HIGH);
   delay(3000);
   digitalWrite(TRANSMIT_LED, LOW);
