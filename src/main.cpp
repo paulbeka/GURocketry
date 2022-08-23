@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SPI.h>
 #include <SD.h>
 #include <SoftwareSerial.h>
 #include <cmath>
@@ -10,6 +11,9 @@
 #include "sensors/altimeter.cpp"
 #include "sensors/IMUSensor.cpp"
 #include "communication/rocket.cpp"
+
+#define CS_PIN 10 
+#define TRANSMIT_LED 21
 
 using std::string; using std::vector;
 
@@ -56,18 +60,22 @@ String formattedMessage(double accel, double alt) {
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(TRANSMIT_LED, OUTPUT);
   Serial.begin(115200);
+  
   // LoRa
   rocket = Rocket();
   rocket.setup();
 
   // SD
-  // if (!SD.begin(BUILTIN_SDCARD)) {
-  //   Serial.println("Error initialising SD card");
-  //   while (1);
-  // }
+  while (!SD.begin(CS_PIN)) {
+    Serial.println("Error initialising SD card");
+    delay(300);
+  }
+  Serial.println("Initialised SD card");
+
   String line = String("-------------------");
-  // writeToFile(line);
+  writeToFile(line);
 
   // sensors
   Serial.println("Initializing sensors...");
@@ -81,6 +89,10 @@ void setup() {
   // Kalman
   calculator = KalmanMath();
   currentState = {.state = Matrix(3,1), .covariance = Matrix(3,3)};
+
+  digitalWrite(TRANSMIT_LED, HIGH);
+  delay(3000);
+  digitalWrite(TRANSMIT_LED, LOW);
 }
 
 void loop() {
@@ -92,6 +104,9 @@ void loop() {
   String message = formattedMessage(accel, alt);
   Serial.println(message);
   // writeToFile(message);
+  digitalWrite(TRANSMIT_LED, HIGH);
+  delay(200);
+  digitalWrite(TRANSMIT_LED, LOW);
   rocket.sendMessage(message);
 }
 
