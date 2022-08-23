@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include "../headers/GPS.h"
 
-#define RXPin 0
-#define TXPin 1
+#define GPSSerial Serial1
+
+Adafruit_GPS adafruit_gps(&GPSSerial);
 
 GPS::GPS() { 
 }
@@ -42,9 +43,8 @@ String GPS::getTime() {
 bool GPS::refreshNMEA() {
     adafruit_gps.read();
     if (adafruit_gps.newNMEAreceived()) {
-        adafruit_gps.parse(adafruit_gps.lastNMEA());
-        Serial.println("PARSED NMEA");
-        return true;
+        if (adafruit_gps.parse(adafruit_gps.lastNMEA())) 
+            return true;
     }
     return false;
 }

@@ -9,7 +9,6 @@ class GPS {
     private:
         bool refreshNMEA();
     public:
-        Adafruit_GPS adafruit_gps;
         GPS();
         void setup();
         float getLat();
