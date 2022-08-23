@@ -13,11 +13,12 @@ GPS::GPS() {
 }
 
 void GPS::setup() {
-    Serial.println("Initialising GPS Client");
+    Serial.println("Initialising GPS Client...");
     ss.begin(9600);
     if (!ss) {
         Serial.println("Error initialising Software Serial!");
     }
+    Serial.print("GPS Client Initialised.");
 }
 
 double GPS::getLong() {
@@ -47,6 +48,31 @@ uint32_t GPS::getTime() {
         if (tinyGPS.encode(ss.read())) {
             if (tinyGPS.location.isValid()) {
                 return tinyGPS.time.value();
+            }
+        }
+    }
+    return 0.0;
+}
+
+// Extra Joe data - 
+// maybe add class.isValid() to non location data
+
+double GPS::getSpeed() {
+    while (ss.available() > 0) {
+        if (tinyGPS.encode(ss.read())) {
+            if (tinyGPS.location.isValid()) {
+                return tinyGPS.speed.mps();
+            }
+        }
+    }
+    return 0.0;
+}
+
+double GPS::getAlt() {
+    while (ss.available() > 0) {
+        if (tinyGPS.encode(ss.read())) {
+            if (tinyGPS.location.isValid()) {
+                return tinyGPS.altitude.meters();
             }
         }
     }

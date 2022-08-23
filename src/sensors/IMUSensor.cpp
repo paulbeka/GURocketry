@@ -41,4 +41,54 @@ public:
         delay(BNO055_SAMPLERATE_DELAY_MS);
         return event.acceleration.y;
     }
+
+    // Extra Joe data - 
+    // maybe functions return vectors/arrays instead of each indiviudal component?
+    // event.gyro or event.orientation for obtaining omega_
+
+    float getAccX() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.acceleration.x;
+    }
+
+    float getAccY() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.acceleration.y;
+    }
+
+    float getAccZ() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.acceleration.z;
+    }
+
+    float getOmegaX() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.gyro.x;
+    }
+
+    float getOmegaY() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.gyro.y;
+    }
+
+    float getOmegaZ() {
+        sensors_event_t event;
+        bno.getEvent(&event);
+        delay(BNO055_SAMPLERATE_DELAY_MS);
+        return event.gyro.z;
+    }
+
+    // write quaternion function: 
+    // reference: https://github.com/adafruit/Adafruit_BNO055/blob/master/utility/quaternion.h
+    // example: https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/webserial_3d/webserial_3d.ino
 };

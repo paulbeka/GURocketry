@@ -18,6 +18,7 @@ void writeToFile(String message) {
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
+  Serial.println("GU Rocketry - Saltire 2 | Ground Station\n");
 
   Serial.println("Initialising LoRa...");
   LoRa.setPins(RFM95_CS, RFM95_RST, RFM95_INT);
@@ -26,13 +27,13 @@ void setup() {
     while (1);
   }
   Serial.println("LoRa init successful.\n");
-  LoRa.setTxPower(23); // increase power and therefore range by +20db (5-23 available)
+  LoRa.setTxPower(23);
 
   while (!SD.begin(BUILTIN_SDCARD)) {
-    Serial.println("Error initialising SD card");
-    delay(300);
+    Serial.println("Error initialising SD card!");
+    delay(1000);
   }
-  Serial.println("Initialised SD card");
+  Serial.println("Initialised SD card.");
 }
 
 void loop() {

@@ -12,6 +12,8 @@ class GPS {
         double getLat();
         double getLong();
         uint32_t getTime();
+        double getSpeed();
+        double getAlt();
 };
 
 #endif 
