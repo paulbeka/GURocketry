@@ -2,7 +2,6 @@
 #include <SPI.h>
 #include <SD.h>
 #include <SoftwareSerial.h>
-#include <Adafruit_GPS.h>
 #include <cmath>
 #include <string>
 #include <sstream>
@@ -28,16 +27,18 @@ void writeToFile(String message) {
   sdFile.close();
 }
 
-String formattedMessage(double gpsLat, double gpsLong, String gpsTime, double accel, double alt) {
+String formattedMessage(double gpsLat, double gpsLong, uint32_t gpsTime, float accel, float alt) {
   String gpsLatString = String(gpsLat);
   String gpsLongString = String(gpsLong);
-  String formattedString = String("Time: " + gpsTime + " | Lat: " + gpsLatString + " Long: " + gpsLongString);
+  String gpsTimeString = String(gpsTime);
+  String formattedString = String("Time: " + gpsTimeString + " | Lat: " + gpsLatString + " Long: " + gpsLongString);
   formattedString += String(" | Acceleration: " + String(accel) + " Altitude: " + String(alt));
   return formattedString;
 }
 
-String formatSDMessage(double gpsLat, double gpsLong, String gpsTime, double accel, double alt) {
-  String formattedSDMessage = String(gpsTime + "," + String(gpsLat) + "," + String(gpsLong) + "," + String(accel) + "," + String(alt));
+String formatSDMessage(double gpsLat, double gpsLong, uint32_t gpsTime, float accel, float alt) {
+  String gpsTimeString = String(gpsTime);
+  String formattedSDMessage = String(gpsTimeString + "," + String(gpsLat) + "," + String(gpsLong) + "," + String(accel) + "," + String(alt));
   return formattedSDMessage;
 }
 
@@ -81,9 +82,9 @@ void setup() {
 void loop() {
   float accel = imuSensor.getAcceleration();
   float alt = altSensor.getAltitude();
-  float gpsLat = gps.getLat();
-  float gpsLong = gps.getLong();
-  String gpsTime = gps.getTime();
+  double gpsLat = gps.getLat();
+  double gpsLong = gps.getLong();
+  uint32_t gpsTime = gps.getTime();
 
   String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
   String sdString = formatSDMessage(gpsLat, gpsLong, gpsTime, accel, alt);
