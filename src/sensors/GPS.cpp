@@ -1,9 +1,14 @@
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 #include "../headers/GPS.h"
 
 #define GPSSerial Serial1
+#define RX_PIN 0
+#define TX_PIN 1
 
-Adafruit_GPS adafruit_gps(&GPSSerial);
+// Adafruit_GPS adafruit_gps(&GPSSerial);
+// SoftwareSerial ss(TX_PIN, RX_PIN);
+// Adafruit_GPS adafruit_gps(&ss);
 
 GPS::GPS() { 
 }
