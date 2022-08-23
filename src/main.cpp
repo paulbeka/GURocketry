@@ -7,7 +7,6 @@
 #include <sstream>
 
 #include <Matrix.h>
-#include "../lib/KalmanMath/KalmanMath.h"
 #include "sensors/altimeter.cpp"
 #include "sensors/IMUSensor.cpp"
 #include "communication/rocket.cpp"
@@ -15,16 +14,11 @@
 #define CS_PIN 10 
 #define TRANSMIT_LED 21
 
-using std::string; using std::vector;
+Rocket rocket;
 
 char filename[9] = "data.txt";
 AltimeterSensor altSensor;
 IMUSensor imuSensor;
-
-Rocket rocket;
-KalmanMath calculator;
-Matrix H;
-StateAndCovariance currentState;
 
 void writeToFile(String message) {
   File sdFile = SD.open(filename, FILE_WRITE);
@@ -32,30 +26,14 @@ void writeToFile(String message) {
   sdFile.close();
 }
 
-Matrix getSensorReadings() {
-  std::vector<double> temp;
-  temp.push_back(altSensor.getAltitude());
-  temp.push_back(imuSensor.getAcceleration());
-  std::vector<std::vector<double>> initialReadings;
-  initialReadings.push_back(temp);
-  Matrix initialMatrix = Matrix(initialReadings, 2, 1);
-  return initialMatrix;
-}
-
-Matrix getHValues(Matrix sensorValues) {
-  std::vector<std::vector<double>> HList = {{0,0,0}, {0,0,0}};
-  if (sensorValues(0,0) != 0) {
-    HList[0][0] = 1;
-  }
-  if (sensorValues(0,1) != 0) {
-    HList[1][2] = 1;
-  }
-  return Matrix(HList, 2, 3);
-} 
-
 String formattedMessage(double accel, double alt) {
   String formattedString = String("Acceleration: " + String(accel) + " Altitude: " + String(alt));
   return formattedString;
+}
+
+String formatWrittenMessage(double accel, double alt) {
+  String formattedWrittenString = String(String(accel) + "," + String(alt));
+  return formattedWrittenString;
 }
 
 void setup() {
@@ -74,8 +52,8 @@ void setup() {
   }
   Serial.println("Initialised SD card");
 
-  String line = String("-------------------");
-  writeToFile(line);
+  String newSetupLine = String("-------Acceleration,Altitude---------");
+  writeToFile(newSetupLine);
 
   // sensors
   Serial.println("Initializing sensors...");
@@ -86,10 +64,6 @@ void setup() {
   imuSensor.setup();
   Serial.println("Initialized IMU sensor.");
 
-  // Kalman
-  calculator = KalmanMath();
-  currentState = {.state = Matrix(3,1), .covariance = Matrix(3,3)};
-
   digitalWrite(TRANSMIT_LED, HIGH);
   delay(3000);
   digitalWrite(TRANSMIT_LED, LOW);
@@ -98,15 +72,16 @@ void setup() {
 void loop() {
   float accel = imuSensor.getAcceleration();
   float alt = altSensor.getAltitude();
-  // Matrix sensorValues = getSensorReadings();
-  // H = getHValues(sensorValues);
-  // currentState = calculator.kalmanIteration(currentState, sensorValues, H);
+
   String message = formattedMessage(accel, alt);
+  String sdString = formatWrittenMessage(accel, alt);
+
   Serial.println(message);
-  // writeToFile(message);
+  rocket.sendMessage(message);
+  writeToFile(sdString);
+
   digitalWrite(TRANSMIT_LED, HIGH);
   delay(200);
   digitalWrite(TRANSMIT_LED, LOW);
-  rocket.sendMessage(message);
 }
 
