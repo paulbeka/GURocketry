@@ -7,8 +7,6 @@
 #include <string>
 #include <sstream>
 
-#include <Matrix.h>
-#include "../lib/KalmanMath/KalmanMath.h"
 #include "sensors/altimeter.cpp"
 #include "sensors/IMUSensor.cpp"
 #include "headers/GPS.h"
@@ -17,17 +15,12 @@
 #define CS_PIN 10 
 #define TRANSMIT_LED 21
 
-using std::string; using std::vector;
-
 char filename[9] = "data.txt";
 AltimeterSensor altSensor;
 IMUSensor imuSensor;
 
-// GPS gps;
+GPS gps;
 Rocket rocket;
-KalmanMath calculator;
-Matrix H;
-StateAndCovariance currentState;
 
 void writeToFile(String message) {
   File sdFile = SD.open(filename, FILE_WRITE);
@@ -35,33 +28,17 @@ void writeToFile(String message) {
   sdFile.close();
 }
 
-Matrix getSensorReadings() {
-  std::vector<double> temp;
-  temp.push_back(altSensor.getAltitude());
-  temp.push_back(imuSensor.getAcceleration());
-  std::vector<std::vector<double>> initialReadings;
-  initialReadings.push_back(temp);
-  Matrix initialMatrix = Matrix(initialReadings, 2, 1);
-  return initialMatrix;
-}
-
-Matrix getHValues(Matrix sensorValues) {
-  std::vector<std::vector<double>> HList = {{0,0,0}, {0,0,0}};
-  if (sensorValues(0,0) != 0) {
-    HList[0][0] = 1;
-  }
-  if (sensorValues(0,1) != 0) {
-    HList[1][2] = 1;
-  }
-  return Matrix(HList, 2, 3);
-} 
-
 String formattedMessage(double gpsLat, double gpsLong, String gpsTime, double accel, double alt) {
   String gpsLatString = String(gpsLat);
   String gpsLongString = String(gpsLong);
   String formattedString = String("Time: " + gpsTime + " | Lat: " + gpsLatString + " Long: " + gpsLongString);
   formattedString += String(" | Acceleration: " + String(accel) + " Altitude: " + String(alt));
   return formattedString;
+}
+
+String formatSDMessage(double gpsLat, double gpsLong, String gpsTime, double accel, double alt) {
+  String formattedSDMessage = String(gpsTime + "," + String(gpsLat) + "," + String(gpsLong) + "," + String(accel) + "," + String(alt));
+  return formattedSDMessage;
 }
 
 void setup() {
@@ -80,8 +57,8 @@ void setup() {
   }
   Serial.println("Initialised SD card");
 
-  String line = String("-------------------");
-  writeToFile(line);
+  String newSetupLine = String("------time,lat,long,accel,alt-------");
+  writeToFile(newSetupLine);
 
   // sensors
   Serial.println("Initializing sensors...");
@@ -91,13 +68,9 @@ void setup() {
   imuSensor = IMUSensor();
   imuSensor.setup();
   Serial.println("Initialized IMU sensor.");
-  // gps = GPS();
-  // gps.setup();
+  gps = GPS();
+  gps.setup();
   Serial.println("Initialized GPS sensor.");
-
-  // Kalman
-  calculator = KalmanMath();
-  currentState = {.state = Matrix(3,1), .covariance = Matrix(3,3)};
 
   digitalWrite(TRANSMIT_LED, HIGH);
   delay(3000);
@@ -107,18 +80,20 @@ void setup() {
 void loop() {
   float accel = imuSensor.getAcceleration();
   float alt = altSensor.getAltitude();
-  // float gpsLat = gps.getLat();
-  // float gpsLong = gps.getLong();
-  // String gpsTime = gps.getTime();
-  // Matrix sensorValues = getSensorReadings();
-  // H = getHValues(sensorValues);
-  // currentState = calculator.kalmanIteration(currentState, sensorValues, H);
-  // String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
-  // Serial.println(message);
-  // writeToFile(message);
+  float gpsLat = gps.getLat();
+  float gpsLong = gps.getLong();
+  String gpsTime = gps.getTime();
+
+  String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
+  String sdString = formatSDMessage(gpsLat, gpsLong, gpsTime, accel, alt);
+
+  Serial.println(message);
+  rocket.sendMessage(message);
+
   digitalWrite(TRANSMIT_LED, HIGH);
   delay(200);
   digitalWrite(TRANSMIT_LED, LOW);
-  // rocket.sendMessage(message);
+
+  writeToFile(sdString);
 }
 
