@@ -21,7 +21,7 @@ void GPS::setup() {
     Serial.print("GPS Client Initialised.");
 }
 
-double GPS::getLong() {
+double GPS::getLng() {
     while (ss.available() > 0) {
         if (tinyGPS.encode(ss.read())) {
             if (tinyGPS.location.isValid()) {
@@ -60,7 +60,7 @@ uint32_t GPS::getTime() {
 double GPS::getSpeed() {
     while (ss.available() > 0) {
         if (tinyGPS.encode(ss.read())) {
-            if (tinyGPS.location.isValid()) {
+            if (tinyGPS.speed.isValid()) {
                 return tinyGPS.speed.mps();
             }
         }
@@ -71,7 +71,7 @@ double GPS::getSpeed() {
 double GPS::getAlt() {
     while (ss.available() > 0) {
         if (tinyGPS.encode(ss.read())) {
-            if (tinyGPS.location.isValid()) {
+            if (tinyGPS.altitude.isValid()) {
                 return tinyGPS.altitude.meters();
             }
         }

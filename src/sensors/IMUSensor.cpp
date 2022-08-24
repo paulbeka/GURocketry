@@ -88,6 +88,20 @@ public:
         return event.gyro.z;
     }
 
+    float *getQuat(float *q) {
+        sensors_event_t event;
+        bno.getEvent(&event);
+
+        imu::Quaternion quat = bno.getQuat();
+        
+        q[0] = quat.w();
+        q[1] = quat.x();
+        q[2] = quat.y();
+        q[3] = quat.z();
+
+        return q;
+    }
+
     // write quaternion function: 
     // reference: https://github.com/adafruit/Adafruit_BNO055/blob/master/utility/quaternion.h
     // example: https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/webserial_3d/webserial_3d.ino

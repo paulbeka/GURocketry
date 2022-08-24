@@ -10,7 +10,7 @@ class GPS {
         GPS();
         void setup();
         double getLat();
-        double getLong();
+        double getLng();
         uint32_t getTime();
         double getSpeed();
         double getAlt();

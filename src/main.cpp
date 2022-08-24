@@ -27,15 +27,14 @@ void writeToFile(String message) {
   sdFile.close();
 }
 
-String formattedMessage(double gpsLat, double gpsLong, uint32_t gpsTime, float accel, float alt) {
-  String gpsLatString = String(gpsLat);
-  String gpsLongString = String(gpsLong);
-  String gpsTimeString = String(gpsTime);
-  String accelString = String(accel);
-  String altString = String(alt);
-  String formattedString = String("Time: " + gpsTimeString + " | Lat: " + gpsLatString + " Long: " + gpsLongString);
-  formattedString += String(" | Acceleration: " + accelString + " Altitude: " + altString);
-  return formattedString;
+String formatMessage(String gpsTime, String gpsLat, String gpsLng, String gpsSpeed, String gpsAlt, String imuAccX, String imuAccY, String imuAccZ, String imuOmegaX, String imuOmegaY, String imuOmegaZ, float *imuQuat, String barAlt) {
+  
+  
+  
+  String formattedDataSend = "GPS - Time: " + gpsTime + " Lat: " + gpsLat + " Lng: " + gpsLng + " Speed: " + gpsSpeed + " Alt: " + gpsAlt;
+  formattedDataSend += " IMU - Acc: " + imuAccX + "," + imuAccY + "," + imuAccZ + " Omega: " + imuOmegaX + "," + imuOmegaY + "," + imuOmegaZ + "Quat: " + String(imuQuat[0]) + "," + String(imuQuat[1]) + "," + String(imuQuat[2]) + String(imuQuat[3]); // +quat
+  formattedDataSend += " Bar - Alt: " + barAlt;
+  return formattedDataSend;
 }
 
 String formatSDMessage(double gpsLat, double gpsLong, uint32_t gpsTime, float accel, float alt) {
@@ -65,7 +64,7 @@ void setup() {
   }
   Serial.println("Initialised SD card.");
 
-  String newSetupLine = String("------time,lat,long,accel,alt------");
+  String newSetupLine = String("------gpsTime, gpsLat, gpsLng, gpsSpeed, gpsAlt | imuAccX, imuAccY, imuAccZ, imuOmegaX, imuOmegaY, imuOmegaZ, imuQuat | barAlt------");
   writeToFile(newSetupLine);
 
   // sensors
@@ -93,19 +92,42 @@ void loop() {
   float accel = imuSensor.getAcceleration();
   float alt = altSensor.getAltitude();
   double gpsLat = gps.getLat();
-  double gpsLong = gps.getLong();
+  double gpsLong = gps.getLng();
   uint32_t gpsTime = gps.getTime();
 
-  String message = formattedMessage(gpsLat, gpsLong, gpsTime, accel, alt);
-  String sdString = formatSDMessage(gpsLat, gpsLong, gpsTime, accel, alt);
+  // gps data
+  u_int32_t gpsTime = gps.getTime();
+  float gpsLat = gps.getLat();
+  float gpsLng = gps.getLng();
+  float gpsSpeed = gps.getSpeed();
+  float gpsAlt = gps.getAlt();
 
-  Serial.println(message);
-  rocket.sendMessage(message);
+  // imu data
+  float imuAccX = imuSensor.getAccX();
+  float imuAccY = imuSensor.getAccY();
+  float imuAccZ = imuSensor.getAccZ();
+  float imuOmegaX = imuSensor.getOmegaX();
+  float imuOmegaY = imuSensor.getOmegaY();
+  float imuOmegaZ = imuSensor.getOmegaZ();
+  float[4] imuQuat; 
+  imuSensor.getQuat(&imuQuat[0]);
+
+  // bar data
+  float barAlt = altSensor.getAltitude();
+
+  String sensorDataSend = formatMessage(String(gpsTime), String(gpsLat), String(gpsLng), String(gpsSpeed), String(gpsAlt), 
+                                        String(imuAccX), String(imuAccY), String(imuAccZ), String(imuOmegaX), String(imuOmegaY), String(imuOmegaZ), &imuQuat, String(barAlt));
+  String sensorDataSave = formatSDMessage(String(gpsTime), String(gpsLat), String(gpsLng), String(gpsSpeed), String(gpsAlt), 
+                                        String(imuAccX), String(imuAccY), String(imuAccZ), String(imuOmegaX), String(imuOmegaY), String(imuOmegaZ), &imuQuat, String(barAlt));
+
+
+  Serial.println(sensorDataSend);
+  rocket.sendMessage(sensorDataSend);
 
   digitalWrite(TRANSMIT_LED, HIGH);
   delay(200);
   digitalWrite(TRANSMIT_LED, LOW);
 
-  writeToFile(sdString);
+  writeToFile(sensorDataSave);
 }
 
