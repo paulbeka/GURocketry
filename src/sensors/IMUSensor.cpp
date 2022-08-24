@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <array>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
@@ -6,6 +7,7 @@
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (100)
 
+using std::array;
 
 class IMUSensor {
 
@@ -88,17 +90,9 @@ public:
         return event.gyro.z;
     }
 
-    float *getQuat(float *q) {
-        sensors_event_t event;
-        bno.getEvent(&event);
-
+    std::array<double, 4> getQuat() {
         imu::Quaternion quat = bno.getQuat();
-        
-        q[0] = quat.w();
-        q[1] = quat.x();
-        q[2] = quat.y();
-        q[3] = quat.z();
-
+        std::array<double, 4> q {quat.w(), quat.x(), quat.y(), quat.z()};      
         return q;
     }
 
