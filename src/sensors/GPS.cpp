@@ -55,7 +55,6 @@ uint32_t GPS::getTime() {
 }
 
 // Extra Joe data - 
-// maybe add class.isValid() to non location data
 
 double GPS::getSpeed() {
     while (ss.available() > 0) {

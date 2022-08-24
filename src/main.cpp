@@ -32,8 +32,8 @@ void writeToFile(String message) {
 
 String formatMessage(String gpsTime, String gpsLat, String gpsLng, String gpsSpeed, String gpsAlt, String imuAccX, String imuAccY, String imuAccZ, String imuOmegaX, String imuOmegaY, String imuOmegaZ, std::array<double, 4> imuQuat, String barAlt) {
   String formattedDataSend = "GPS - Time: " + gpsTime + " Lat: " + gpsLat + " Lng: " + gpsLng + " Speed: " + gpsSpeed + " Alt: " + gpsAlt;
-  formattedDataSend += " IMU - Acc: " + imuAccX + "," + imuAccY + "," + imuAccZ + " Omega: " + imuOmegaX + "," + imuOmegaY + "," + imuOmegaZ + "Quat: " + String(imuQuat[0]) + "," + String(imuQuat[1]) + "," + String(imuQuat[2]) + String(imuQuat[3]);
-  formattedDataSend += " Bar - Alt: " + barAlt;
+  formattedDataSend += " | IMU - Acc: " + imuAccX + "," + imuAccY + "," + imuAccZ + " Omega: " + imuOmegaX + "," + imuOmegaY + "," + imuOmegaZ + " Quat: (" + String(imuQuat[0]) + "," + String(imuQuat[1]) + "," + String(imuQuat[2]) + "," + String(imuQuat[3]) +")";
+  formattedDataSend += " | Bar - Alt: " + barAlt;
   return formattedDataSend;
 }
 
@@ -54,8 +54,8 @@ void setup() {
   }
   Serial.println("Initialised SD card.");
 
-  String newSetupLine = String("------gpsTime, gpsLat, gpsLng, gpsSpeed, gpsAlt | imuAccX, imuAccY, imuAccZ, imuOmegaX, imuOmegaY, imuOmegaZ, imuQuat | barAlt------");
-  writeToFile(newSetupLine);
+  // String newSetupLine = String("------gpsTime, gpsLat, gpsLng, gpsSpeed, gpsAlt | imuAccX, imuAccY, imuAccZ, imuOmegaX, imuOmegaY, imuOmegaZ, imuQuat | barAlt------");
+  // writeToFile(newSetupLine);
 
   // sensors
   Serial.println("Initialising sensors...");
@@ -64,6 +64,8 @@ void setup() {
   Serial.println("Initialised altitude sensor.");
   imuSensor = IMUSensor();
   imuSensor.setup();
+  imuSensor.getDetails(); // imu debug
+  imuSensor.getCal(); // imu debug
   Serial.println("Initialised IMU sensor.");
   gps = GPS();
   gps.setup();
@@ -88,28 +90,30 @@ void loop() {
   float gpsAlt = gps.getAlt();
 
   // imu data
-  float imuAccX = imuSensor.getAccX();
-  float imuAccY = imuSensor.getAccY();
-  float imuAccZ = imuSensor.getAccZ();
-  float imuOmegaX = imuSensor.getOmegaX();
-  float imuOmegaY = imuSensor.getOmegaY();
-  float imuOmegaZ = imuSensor.getOmegaZ();
-  std::array<double, 4> imuQuat = imuSensor.getQuat();
+  // float imuAccX = imuSensor.getAccX();
+  // float imuAccY = imuSensor.getAccY();
+  // float imuAccZ = imuSensor.getAccZ();
+  // float imuOmegaX = imuSensor.getOmegaX();
+  // float imuOmegaY = imuSensor.getOmegaY();
+  // float imuOmegaZ = imuSensor.getOmegaZ();
+  // std::array<double, 4> imuQuat = imuSensor.getQuat();
+  imuSensor.getAllSensorData(); // imu debug
 
   // bar data
   float barAlt = altSensor.getAltitude();
 
-  String sensorData = formatMessage(String(gpsTime), String(gpsLat), String(gpsLng), String(gpsSpeed), String(gpsAlt), 
-                                        String(imuAccX), String(imuAccY), String(imuAccZ), String(imuOmegaX), String(imuOmegaY), String(imuOmegaZ), imuQuat, String(barAlt));
+  // String sensorData = formatMessage(String(gpsTime), String(gpsLat), String(gpsLng), String(gpsSpeed), String(gpsAlt), 
+  //                                   String(imuAccX), String(imuAccY), String(imuAccZ), String(imuOmegaX), String(imuOmegaY), String(imuOmegaZ), imuQuat, 
+  //                                   String(barAlt));
 
 
-  Serial.println(sensorData);
-  rocket.sendMessage(sensorData);
+  // Serial.println(sensorData);
+  // rocket.sendMessage(sensorData);
 
-  digitalWrite(TRANSMIT_LED, HIGH);
-  delay(200);
-  digitalWrite(TRANSMIT_LED, LOW);
+  // digitalWrite(TRANSMIT_LED, HIGH);
+  // delay(200);
+  // digitalWrite(TRANSMIT_LED, LOW);
 
-  writeToFile(sensorData);
+  // writeToFile(sensorData);
 }
 
