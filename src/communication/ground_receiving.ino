@@ -1,3 +1,4 @@
+/* GU Rocketry - Saltire 2 | Ground Station | 25/08/22 */
 #include <LoRa.h>
 #include <SD.h>
 #include <SPI.h>

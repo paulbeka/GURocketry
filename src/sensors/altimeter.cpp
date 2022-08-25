@@ -6,8 +6,10 @@ public:
   Adafruit_MPL3115A2 baro;
 
   void setup() {
+    Serial.println("Initialising altimeter...");
+
     if (!baro.begin()) {
-      Serial.println("Could not find sensor. Check wiring.");
+      Serial.println("Could not find sensor. Check wiring!");
       while(1);
     }
 
@@ -15,6 +17,7 @@ public:
     // this is needed for accurate altitude measurement
     // STD SLP = 1013.26 hPa
     baro.setSeaPressure(1013.26);
+    Serial.println("Altimeter initialised.");
   }
 
   float getAltitude() {

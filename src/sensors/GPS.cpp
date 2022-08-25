@@ -13,12 +13,12 @@ GPS::GPS() {
 }
 
 void GPS::setup() {
-    Serial.println("Initialising GPS Client...");
+    Serial.println("Initialising GPS client...");
     ss.begin(9600);
     if (!ss) {
         Serial.println("Error initialising Software Serial!");
     }
-    Serial.print("GPS Client Initialised.");
+    Serial.println("GPS client initialised.");
 }
 
 double GPS::getLng() {

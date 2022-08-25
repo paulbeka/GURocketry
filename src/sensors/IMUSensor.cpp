@@ -17,44 +17,54 @@ public:
     void setup() {
 
         /* Initialise the sensor */
+        Serial.println("Initialising IMU sensor...");
+
         if(!bno.begin()) {
             /* There was a problem detecting the BNO055 ... check your connections */
             Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
             while(1);
         }
-
+        
         delay(1000);
-
         bno.setExtCrystalUse(true);
+        Serial.println("IMU sensor initialised.");
     }
 
-    String getSensorData() {
-        sensors_event_t event;
-        bno.getEvent(&event);
+    void getDetails() {
+        /* Create a sensor_t object in memory to filled below */
+        sensor_t sensor;
 
-        String finalStr = String(String(event.orientation.x) + ";" + String(event.orientation.y) + ";" + String(event.orientation.z));
-        delay(BNO055_SAMPLERATE_DELAY_MS);
-        return finalStr;
+        /* Get the sensor details and place them in 'sensor' */
+        bno.getSensor(&sensor);
+
+        /* Display the sensor details */
+        Serial.println("");
+        Serial.println("------------------IMU Sensor Details------------------");
+        Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+        Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+        Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+        Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" lux");
+        Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" lux");
+        Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" lux");  
+        Serial.println("-----------------------------------------------------");
+        Serial.println("");
+        // https://learn.adafruit.com/using-the-adafruit-unified-sensor-driver/how-does-it-work#void-getevent-sensors-event-t-star
     }
 
-    float getAcceleration() {
-        sensors_event_t event;
-        bno.getEvent(&event);
-        delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.acceleration.y;
+    void getCalVals() {
+        /* Prints calibration values of sensor to Serial */
+        uint8_t system, gyro, accel, mag = 0;
+        bno.getCalibration(&system, &gyro, &accel, &mag);
+        Serial.println("Calibration: Sys=");
+        Serial.print(system);
+        Serial.print(" Gyro=");
+        Serial.print(gyro);
+        Serial.print(" Accel=");
+        Serial.print(accel);
+        Serial.print(" Mag=");
+        Serial.println(mag);
+        // https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/read_all_data/read_all_data.ino
     }
-
-    // Solutions?
-    /* 
-        Test read_all_data.ino from bno repo
-        Try get all sensor data - maybe the calling of multiple events at different times ruins values
-        Use of and without samplerate delay to see if clearance of buffer?
-        In specific x y z aquisition functions, try save data in variable before samplerate delay then return
-
-        ref:
-        https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor
-        https://github.com/adafruit/Adafruit_BNO055   
-    */ 
 
     String getAllSensorData() {
         // seperate events specifying vector type for readings, all in one function
@@ -73,95 +83,63 @@ public:
 
         std::array<double, 4> q {quat.w(), quat.x(), quat.y(), quat.z()};      
 
-        String dataString = "ax: " + String(accX) + " ay: " + String(accY) + " az: " + String(accZ) + " ox: "; 
-        dataString += String(omegaX) + " oy: " + String(omegaY) + " oz: " + String(omegaZ);
-        dataString += " qw: " + String(q[0]) + " qx: " + String(q[1]) + " qy: " + String(q[2]) + " qz: " + String(q[3]);
+        String dataString = "accX: " + String(accX) + " accY: " + String(accY) + " accZ: " + String(accZ); 
+        dataString += " omegaX: " + String(omegaX) + " omegaY: " + String(omegaY) + " omegaZ: " + String(omegaZ);
+        dataString += " quatW: " + String(q[0]) + " quatX: " + String(q[1]) + " quatY: " + String(q[2]) + " quatZ: " + String(q[3]);
 
-        Serial.print(dataString);
         delay(BNO055_SAMPLERATE_DELAY_MS);
         return dataString;
-        
         // https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/read_all_data/read_all_data.ino
     }
 
-    void getCal() {
-        // hopefully prints calibration
-        uint8_t system, gyro, accel, mag = 0;
-        bno.getCalibration(&system, &gyro, &accel, &mag);
-        Serial.println();
-        Serial.print("Calibration: Sys=");
-        Serial.print(system);
-        Serial.print(" Gyro=");
-        Serial.print(gyro);
-        Serial.print(" Accel=");
-        Serial.print(accel);
-        Serial.print(" Mag=");
-        Serial.println(mag);
-        // https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/read_all_data/read_all_data.ino
-    }
-
-    void getDetails() {
-        /* Create a sensor_t object in memory to filled below */
-        sensor_t sensor;
-
-        /* Get the sensor details and place them in 'sensor' */
-        bno.getSensor(&sensor);
-
-        /* Display the sensor details */
-        Serial.println("------------------------------------");
-        Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-        Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-        Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-        Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" lux");
-        Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" lux");
-        Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" lux");  
-        Serial.println("------------------------------------");
-        Serial.println("");
-        // https://learn.adafruit.com/using-the-adafruit-unified-sensor-driver/how-does-it-work#void-getevent-sensors-event-t-star
-    }
-
-    // Extra Joe data - 
+    // unsure if delay messes with sensor reading - perhaps by clearing buffer - so have stored in variable to fix
 
     float getAccX() {
         sensors_event_t event;
-        bno.getEvent(&event);
+        bno.getEvent(&event, Adafruit_BNO055::VECTOR_ACCELEROMETER);
+        float x = event.acceleration.x;
         delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.acceleration.x;
+        return x;
     }
 
     float getAccY() {
         sensors_event_t event;
-        bno.getEvent(&event);
+        bno.getEvent(&event, Adafruit_BNO055::VECTOR_ACCELEROMETER);
+        float y = event.acceleration.y;
         delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.acceleration.y;
+        return y;
     }
 
     float getAccZ() {
         sensors_event_t event;
-        bno.getEvent(&event);
+        bno.getEvent(&event, Adafruit_BNO055::VECTOR_ACCELEROMETER);
+        float z = event.acceleration.z;
         delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.acceleration.z;
+        return z;
     }
 
     float getOmegaX() {
         sensors_event_t event;
-        bno.getEvent(&event);
+        bno.getEvent(&event, Adafruit_BNO055::VECTOR_GYROSCOPE);
+        float x = event.gyro.x;
         delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.gyro.x;
+        return x;
     }
 
     float getOmegaY() {
         sensors_event_t event;
-        bno.getEvent(&event);
+        bno.getEvent(&event, Adafruit_BNO055::VECTOR_GYROSCOPE);
+        float y = event.gyro.y;
         delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.gyro.y;
+        return y;
     }
 
     float getOmegaZ() {
         sensors_event_t event;
-        bno.getEvent(&event);
+        bno.getEvent(&event, Adafruit_BNO055::VECTOR_GYROSCOPE);
+        float z = event.gyro.z;
         delay(BNO055_SAMPLERATE_DELAY_MS);
-        return event.gyro.z;
+        return z;
     }
 
     std::array<double, 4> getQuat() {
@@ -169,4 +147,9 @@ public:
         std::array<double, 4> q {quat.w(), quat.x(), quat.y(), quat.z()};      
         return q;
     }
+
+    /* ref:
+        https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor
+        https://github.com/adafruit/Adafruit_BNO055
+    */ 
 };

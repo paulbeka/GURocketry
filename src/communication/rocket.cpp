@@ -18,7 +18,7 @@ public:
             Serial.println("LoRa init failed!");
             while (1);
         }
-        Serial.println("LoRa init successful.\n");
+        Serial.println("LoRa init successful.");
         LoRa.setTxPower(23); // increase power and therefore range by +20db (5-23 available)
     }
 
