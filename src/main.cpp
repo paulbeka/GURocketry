@@ -31,8 +31,8 @@ void writeToFile(String message) {
   sdFile.close();
 }
 
-String formatMessage(String gpsTime, String gpsLat, String gpsLng, String gpsSpeed, String gpsAlt, String imuData, String barAlt) {
-  String formattedDataSend = "GPS - Time: " + gpsTime + " Lat: " + gpsLat + " Lng: " + gpsLng + " Speed: " + gpsSpeed + " Alt: " + gpsAlt;
+String formatMessage(String timeElapsed, String gpsTime, String gpsLat, String gpsLng, String gpsSpeed, String gpsAlt, String imuData, String barAlt) {
+  String formattedDataSend = "FCC - Millis: " + timeElapsed + " | GPS - Time: " + gpsTime + " Lat: " + gpsLat + " Lng: " + gpsLng + " Speed: " + gpsSpeed + " Alt: " + gpsAlt;
   formattedDataSend += " | IMU - " + imuData;
   formattedDataSend += " | BAR - Alt: " + barAlt;
   return formattedDataSend;
@@ -57,7 +57,7 @@ void setup() {
   }
   Serial.println("Initialised SD card.\n");
 
-  String newSetupLine = String("------gpsTime, gpsLat, gpsLng, gpsSpeed, gpsAlt | imuAccX, imuAccY, imuAccZ, imuOmegaX, imuOmegaY, imuOmegaZ, imuQuatW, imuQuatX, imuQuatY, imuQuatZ | barAlt------");
+  String newSetupLine = String("------fccMillis, gpsTime, gpsLat, gpsLng, gpsSpeed, gpsAlt | imuAccX, imuAccY, imuAccZ, imuOmegaX, imuOmegaY, imuOmegaZ, imuQuatW, imuQuatX, imuQuatY, imuQuatZ | barAlt------");
   writeToFile(newSetupLine);
 
   // Sensors
@@ -100,14 +100,14 @@ void loop() {
   float barAlt = altSensor.getAltitude();
 
   // Concatenate sensor data
-  String sensorData = formatMessage(String(gpsTime), String(gpsLat), String(gpsLng), String(gpsSpeed), String(gpsAlt), imuData, String(barAlt));
+  String sensorData = formatMessage(String(timeElapsed), String(gpsTime), String(gpsLat), String(gpsLng), String(gpsSpeed), String(gpsAlt), imuData, String(barAlt));
 
   // Send and save sensor data
   Serial.println(sensorData);
   rocket.sendMessage(sensorData);
 
   digitalWrite(TRANSMIT_LED, HIGH);
-  delay(200);
+  delay(100);
   digitalWrite(TRANSMIT_LED, LOW);
 
   writeToFile(sensorData);

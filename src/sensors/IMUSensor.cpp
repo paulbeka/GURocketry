@@ -87,7 +87,7 @@ public:
         dataString += " omegaX: " + String(omegaX) + " omegaY: " + String(omegaY) + " omegaZ: " + String(omegaZ);
         dataString += " quatW: " + String(q[0]) + " quatX: " + String(q[1]) + " quatY: " + String(q[2]) + " quatZ: " + String(q[3]);
 
-        delay(BNO055_SAMPLERATE_DELAY_MS);
+        // delay(BNO055_SAMPLERATE_DELAY_MS);
         return dataString;
         // https://github.com/adafruit/Adafruit_BNO055/blob/master/examples/read_all_data/read_all_data.ino
     }
